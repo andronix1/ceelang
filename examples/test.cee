@@ -1,0 +1,19 @@
+const SYS_EXIT: i32 = 60;
+
+                                       # hello
+
+fun main() {
+	const a: i32 = 1;               # this is comment
+	const b: i32 = 2;               # lol ###
+	var c: i32 = a + b;
+	if c != 3 {
+		@syscall(SYS_EXIT, 1);
+	} else if c > 9 {
+		c = 0;
+	} else if c <= 10 {
+		#IGNORE THIS SHHHHH....)))
+	} else {
+		c = c - a;
+	}
+	@syscall(SYS_EXIT, c);
+}
