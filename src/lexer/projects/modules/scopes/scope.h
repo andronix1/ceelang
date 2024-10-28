@@ -1,5 +1,7 @@
 #pragma once
 
+#include "defs/def.h"
+#include "core/str.h"
 #include "core/arr.h"
 
 typedef struct {

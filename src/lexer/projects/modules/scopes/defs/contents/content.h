@@ -11,5 +11,5 @@ typedef struct {
 	def_content_type_t type;
 } def_content_base_t;
 
-typedef def_base_t* def_content_t;
+typedef def_content_base_t* def_content_t;
 

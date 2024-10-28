@@ -9,6 +9,7 @@ typedef slice_t str_slice_t;
 
 str_t str_read_line(FILE* stream);
 str_slice_t str_slice_ltrim(str_slice_t *slice, bool(*f)(char));
+str_slice_t str_slice_right_part(str_slice_t *slice, char c);
 str_slice_t str_slice_from_cstr(char *cstr);
 bool str_slice_starts_with(str_slice_t *slice, str_slice_t *pattern);
 void str_slice_dump(str_slice_t *slice, FILE *stream);

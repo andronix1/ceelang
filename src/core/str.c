@@ -15,6 +15,12 @@ str_slice_t str_slice_ltrim(str_slice_t *slice, bool(*f)(char)) {
 	return subslice_after(slice, start);
 }
 
+str_slice_t str_slice_right_part(str_slice_t *slice, char c) {
+	size_t i = slice->len - 1;
+	while (i >= 1 && str_slice_at(slice, i) != c) i--;
+	return subslice_after(slice, i);
+}
+
 str_slice_t str_slice_from_cstr(char *cstr) {
 	str_slice_t result = {
 		.size = 1,
