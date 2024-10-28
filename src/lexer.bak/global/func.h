@@ -1,10 +1,11 @@
 #pragma once
 
 #include "lexer/base.h"
+#include "lexer/nodes/code/node.h"
 
 typedef struct {
 	ident_t name;
-	ast_node_block_t ast_block;
+	code_node_t body;
 } func_t;
 
 typedef arr_t funcs_t;

@@ -6,4 +6,5 @@
 typedef struct {
 	ident_t name;
 	funcs_t funcs;
-} module_t; 
+} module_t;
+
