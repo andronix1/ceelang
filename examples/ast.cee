@@ -5,7 +5,7 @@ fun to_percents(v: i32, a: i32, b: i32): i32 {
 fun main() {
     const a: i32 = 1;
     const b: i32 = 2;
-    println(to_percents(a, b));
+    println(to_percents(3, 0, 10));
     println("asdasdasd");
     return;
 }
