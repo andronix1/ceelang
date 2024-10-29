@@ -7,6 +7,8 @@ typedef enum {
     EXPR_BINOP_MINUS,
     EXPR_BINOP_MULTIPLY,
     EXPR_BINOP_DIVIDE,
+    EXPR_BINOP_EQUALS,
+    EXPR_BINOP_NOT_EQUALS
 } expr_binop_type_t;
 
 typedef struct {

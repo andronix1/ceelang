@@ -66,8 +66,10 @@ extern const char *str_token[TOKENS_COUNT];
 
 void token_expect_type(token_t token, token_type_t token_type);
 token_t tokens_try_get(tokens_slice_t *slice, size_t idx);
-tokens_slice_t tokens_get_circle_scope(tokens_slice_t *slice, size_t idx);
+tokens_slice_t tokens_get_circle_scope(tokens_slice_t *slice, size_t from);
+tokens_slice_t tokens_get_figure_scope(tokens_slice_t *slice, size_t from);
 tokens_slice_t tokens_before(tokens_slice_t *slice, token_type_t type);
+tokens_slice_t tokens_before_figure_scoped(tokens_slice_t *slice, token_type_t type);
 tokens_slice_t tokens_before_circle_scoped_included(tokens_slice_t *slice, token_type_t type);
 tokens_slice_t tokens_before_circle_scoped(tokens_slice_t *slice, token_type_t type);
 str_t token_extract_ident(token_t token);

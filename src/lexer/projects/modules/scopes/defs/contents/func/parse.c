@@ -50,40 +50,16 @@ def_content_parse_result_t def_func_content_parse(tokens_slice_t tokens) {
         exit(1);
     }
     str_t *return_type = NULL;
-    token_t token = tokens_try_get(&tokens, i);
-    if (token->type == TOKEN_COLON) {
+    if (tokens_try_get(&tokens, i)->type == TOKEN_COLON) {
         token_t type_token = tokens_try_get(&tokens, ++i);
         return_type = malloc(sizeof(str_t));
         str_t ident = token_extract_ident(type_token);
         memcpy(return_type, &ident, sizeof(str_t));
         i++;
     }
-    token = tokens_try_get(&tokens, i);
-    token_expect_type(token, TOKEN_OPENING_FIGURE_BRACE);
-    i++;
-    stats_t stats = arr_with_cap(stat_t, 1);
-    while (i < tokens.len && (token = tokens_try_get(&tokens, i))->type != TOKEN_CLOSING_FIGURE_BRACE) {
-        size_t j = 0;
-        while (j + i < tokens.len) {
-            token_t next_token = tokens_try_get(&tokens, i + j);
-            if (next_token->type == TOKEN_SEMICOLON) {
-                break;
-            } else if (next_token->type == TOKEN_CLOSING_FIGURE_BRACE) {
-                printf("ERROR: unexpected end of body(expected semicolon)!");
-                exit(1);
-            }
-            j++;
-        }
-        tokens_slice_t after = subslice_after(&tokens, i);
-        tokens_slice_t stat_tokens = subslice_before(&after, j);
-        stat_t stat = stat_parse(stat_tokens);
-        arr_push(stat_t, &stats, stat);
-        i += j + 1;
-    }
-    if (token->type != TOKEN_CLOSING_FIGURE_BRACE) {
-        printf("ERROR: looks like you didn't closed figure brace\n");
-        exit(1);
-    }
+    tokens_slice_t scope_tokens = tokens_get_figure_scope(&tokens, i);
+    stats_t stats = stats_parse(scope_tokens);
+    i += scope_tokens.len + 1;
     def_content_func_t *content = malloc(sizeof(def_content_func_t));
     content->type = DEF_CONTENT_FUNC;
     content->args = args;

@@ -6,6 +6,7 @@ typedef enum {
     STAT_DEFINE,
     STAT_FUNCALL,
     STAT_RETURN,
+    STAT_IF,
 } stat_type_t;
 
 typedef struct {

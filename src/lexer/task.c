@@ -38,6 +38,12 @@ void print_expr(expr_t expr, bool top) {
 				case EXPR_BINOP_MINUS:
 					printf(" - ");
 					break;
+				case EXPR_BINOP_EQUALS:
+					printf(" == ");
+					break;
+				case EXPR_BINOP_NOT_EQUALS:
+					printf(" != ");
+					break;
 				default:
 					printf(" ??? ");
 					break;
@@ -98,8 +104,21 @@ void print_stat(stat_t src_stat) {
 		case STAT_FUNCALL: {
 			stat_funcall_t *stat = (stat_funcall_t*)src_stat;
 			printf("\t");
-			print_funcall(&stat->funcall);
+			print_funcall(&stat->funcall);	
 			printf(";\n");
+			break;
+		}
+		case STAT_IF: {
+			stat_if_t *stat = (stat_if_t*)src_stat;
+			printf("\tif ");
+			print_expr(stat->cond, true);
+			printf(" {\n");
+			stats_t if_stats = stat->if_stats;
+			arr_foreach(stat_t, &if_stats, stat, {
+				printf("\t");
+				print_stat(*stat);
+			});
+			printf("\t}\n");
 			break;
 		}
 		case STAT_RETURN: {

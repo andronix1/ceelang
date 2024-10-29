@@ -46,7 +46,9 @@ raw_expr_t raw_expr_parse(tokens_slice_t tokens) {
             token->type == TOKEN_PLUS ||
             token->type == TOKEN_MINUS ||
             token->type == TOKEN_MULTIPLY ||
-            token->type == TOKEN_DIVIDE
+            token->type == TOKEN_DIVIDE ||
+            token->type == TOKEN_EQUALS ||
+            token->type == TOKEN_NOT_EQUALS
         ) {
             raw_operator_expr_t *expr = malloc(sizeof(raw_operator_expr_t));
             expr->base.type = RAW_EXPR_OPERATOR;
@@ -58,6 +60,10 @@ raw_expr_t raw_expr_parse(tokens_slice_t tokens) {
                 expr->type = EXPR_BINOP_MULTIPLY;
             } else if (token->type == TOKEN_DIVIDE) {
                 expr->type = EXPR_BINOP_DIVIDE;
+            } else if (token->type == TOKEN_EQUALS) {
+                expr->type = EXPR_BINOP_EQUALS;
+            } else if (token->type == TOKEN_NOT_EQUALS) {
+                expr->type = EXPR_BINOP_NOT_EQUALS;
             }
             element = (raw_expr_element_t)expr;
         } else if (token->type == TOKEN_OPENING_CIRCLE_BRACE) {
@@ -126,13 +132,13 @@ raw_expr_t raw_expr_parse(tokens_slice_t tokens) {
     return result;
 }
 
-expr_t expr_parse_scope(raw_expr_t raw_expr);
+expr_t expr_parse_scope(raw_expr_t *raw_expr);
 
 expr_t raw_expr_to_expr(raw_expr_element_t element) {
     if (element->type == RAW_EXPR_READY_EXPR) {
         return ((raw_ready_expr_t*)element)->expr;
     } else if (element->type == RAW_EXPR_SCOPE) {
-        return expr_parse_scope(((raw_scope_expr_t*)element)->expr);
+        return expr_parse_scope(&((raw_scope_expr_t*)element)->expr);
     } else {
         printf("ERROR: invalid expr type. Must be ready or scope expr: %d!\n", element->type);
         exit(1);
@@ -180,35 +186,40 @@ bool binop_2(expr_binop_type_t type) {
     return type == EXPR_BINOP_MINUS || type == EXPR_BINOP_PLUS;
 }
 
-expr_t expr_parse_scope(raw_expr_t raw_expr) {
-    if (raw_expr.slice.len == 0) {
+bool binop_3(expr_binop_type_t type) {
+    return type == EXPR_BINOP_EQUALS || type == EXPR_BINOP_NOT_EQUALS;
+}
+
+expr_t expr_parse_scope(raw_expr_t *raw_expr) {
+    if (raw_expr->slice.len == 0) {
         printf("ERROR: empty expr\n");
         exit(1);
     }
 
-    raw_expr_collect_binops(&raw_expr, binop_1);
-    raw_expr_collect_binops(&raw_expr, binop_2);
+    raw_expr_collect_binops(raw_expr, binop_1);
+    raw_expr_collect_binops(raw_expr, binop_2);
+    raw_expr_collect_binops(raw_expr, binop_3);
 
-    if (raw_expr.slice.len != 1) {
-        printf("ERROR: missing binop in expr(len = %d)!\n", raw_expr.slice.len);
+    if (raw_expr->slice.len != 1) {
+        printf("ERROR: missing binop in expr(len = %d)!\n", raw_expr->slice.len);
         exit(1);
     }
 
-    raw_expr_element_t expr = arr_at(raw_expr_element_t, &raw_expr, 0);
+    raw_expr_element_t expr = arr_at(raw_expr_element_t, raw_expr, 0);
     switch (expr->type) {
         case RAW_EXPR_READY_EXPR:
             return ((raw_ready_expr_t*)expr)->expr;
         case RAW_EXPR_SCOPE:
-            return expr_parse_scope(((raw_scope_expr_t*)expr)->expr);
+            return expr_parse_scope(&((raw_scope_expr_t*)expr)->expr);
         case RAW_EXPR_OPERATOR:
-            printf("ERROR: only operator in expr\n", raw_expr.slice.len);
+            printf("ERROR: only operator in expr\n", raw_expr->slice.len);
             exit(1);
     }
 }
 
 expr_t expr_parse(tokens_slice_t tokens) {
     raw_expr_t raw_expr = raw_expr_parse(tokens);
-    expr_t result = expr_parse_scope(raw_expr);
+    expr_t result = expr_parse_scope(&raw_expr);
     arr_free(&raw_expr);
     return result;
 }

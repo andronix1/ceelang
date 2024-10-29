@@ -27,7 +27,7 @@ def_parse_result_t def_parse(tokens_slice_t tokens) {
         exit(1);
     }
     switch (first_token->type) {
-        case TOKEN_FUN:
+        case TOKEN_FUN: {
             def_content_parse_result_t res = def_func_content_parse(after_tokens);
             def_parse_result_t result = {
                 .def = {
@@ -38,6 +38,7 @@ def_parse_result_t def_parse(tokens_slice_t tokens) {
             };
             return result;
             break;
+        }
         default:
             printf("ERROR: invalid def token %d\n", first_token);
             exit(1);

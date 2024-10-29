@@ -1,6 +1,6 @@
 #include "parse.h"
 
-stat_t stat_parse(tokens_slice_t tokens) {
+stat_parse_result_t stat_parse(tokens_slice_t tokens) {
     token_t first_token = tokens_try_get(&tokens, 0);
     if (first_token->type == TOKEN_CONST || first_token->type == TOKEN_VAR) {
         return define_stat_parse(tokens);
@@ -11,10 +11,29 @@ stat_t stat_parse(tokens_slice_t tokens) {
             exit(1);
         }
         return funcall_stat_parse(tokens);
+    } else if (first_token->type == TOKEN_IF) {
+        return if_stat_parse(tokens);
     } else if (first_token->type == TOKEN_RETURN) {
         return return_stat_parse(tokens);
     } else {
-        printf("ERROR: unknown stat start: %s!\n", str_token[first_token->type]);
+        printf("ERROR: unknown stat: ");
+        for (size_t i = 0; i <= tokens.len; i++) {
+            printf("%s; ", str_token[slice_at(token_t, &tokens, i)->type]);
+        }
+        printf("\n");
         exit(1);
     }
+}
+
+stats_t stats_parse(tokens_slice_t tokens) {
+    size_t i = 0;
+    token_t token;
+    stats_t stats = arr_with_cap(stat_t, 1);
+    while (i < tokens.len) {
+        tokens_slice_t after = subslice_after(&tokens, i);
+        stat_parse_result_t result = stat_parse(after);
+        arr_push(stat_t, &stats, result.stat);
+        i += result.len;
+    }
+    return stats;
 }

@@ -38,21 +38,25 @@ token_t tokens_try_get(tokens_slice_t *slice, size_t idx) {
     return slice_at(token_t, slice, idx);
 }
 
-tokens_slice_t tokens_get_circle_scope(tokens_slice_t *slice, size_t from) {
+tokens_slice_t tokens_get_scope(tokens_slice_t *slice, size_t from, token_type_t opening, token_type_t closing) {
 	size_t i = from;
 	size_t level = 0;
 	token_t token = slice_at(token_t, slice, i);
-	assert(token->type == TOKEN_OPENING_CIRCLE_BRACE);
+	assert(token->type == opening);
 	do {
 		token = slice_at(token_t, slice, i);
-		if (token->type == TOKEN_OPENING_CIRCLE_BRACE) {
+		if (token->type == opening) {
 			level++;
-		} else if (token->type == TOKEN_CLOSING_CIRCLE_BRACE) {
+		} else if (token->type == closing) {
 			level--;
+			if (level == 0) {
+				i++;
+				break;
+			}
 		}
 		i++;
 	} while (level != 0 && i < slice->len);
-	if (token->type != TOKEN_CLOSING_CIRCLE_BRACE) {
+	if (token->type != closing) {
 		printf("ERROR: scope was not closed!\n");
 		exit(1);
 	}
@@ -60,9 +64,34 @@ tokens_slice_t tokens_get_circle_scope(tokens_slice_t *slice, size_t from) {
 	return subslice_before(&after, i - from - 2);
 }
 
+tokens_slice_t tokens_get_circle_scope(tokens_slice_t *slice, size_t from) {
+	return tokens_get_scope(slice, from, TOKEN_OPENING_CIRCLE_BRACE, TOKEN_CLOSING_CIRCLE_BRACE);
+}
+
+tokens_slice_t tokens_get_figure_scope(tokens_slice_t *slice, size_t from) {
+	return tokens_get_scope(slice, from, TOKEN_OPENING_FIGURE_BRACE, TOKEN_CLOSING_FIGURE_BRACE);
+}
+
 tokens_slice_t tokens_before(tokens_slice_t *slice, token_type_t type) {
 	size_t i = 0;
 	for (; i < slice->len && slice_at(token_t, slice, i)->type != type; i++);
+	return subslice_before(slice, i);
+}
+
+tokens_slice_t tokens_before_figure_scoped(tokens_slice_t *slice, token_type_t type) {
+	size_t i = 0;
+	size_t level = 0;
+	for (; i < slice->len; i++) {
+		token_type_t token_type = slice_at(token_t, slice, i)->type;
+		if (token_type == TOKEN_OPENING_FIGURE_BRACE) {
+			level++;
+		} else if (token_type == TOKEN_CLOSING_FIGURE_BRACE) {
+			level--;
+		}
+		if (token_type == type) {
+			break;
+		}
+	}
 	return subslice_before(slice, i);
 }
 
