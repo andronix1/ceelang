@@ -4,4 +4,4 @@
 #include "def.h"
 #include "contents/func/parse.h"
 
-defs_t defs_parse(tokens_t tokens);
+defs_t defs_parse(tokens_slice_t tokens);

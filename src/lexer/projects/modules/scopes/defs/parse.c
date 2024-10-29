@@ -5,7 +5,7 @@ typedef struct {
     size_t len;
 } def_parse_result_t;
 
-def_parse_result_t def_parse(slice_t tokens) {
+def_parse_result_t def_parse(tokens_slice_t tokens) {
     if (tokens.len < 2) {
         printf("ERROR: invalid def tokens len < 2\n");
         exit(1);
@@ -21,7 +21,7 @@ def_parse_result_t def_parse(slice_t tokens) {
         exit(1);
     }
     token_ident_t ident_token = *(token_ident_t*)second_token;
-    slice_t after_tokens = subslice_after(&tokens, 2);
+    tokens_slice_t after_tokens = subslice_after(&tokens, 2);
     if (after_tokens.len == 0) {
         printf("ERROR: invalid def tokens: after_tokens.len == 0\n");
         exit(1);
@@ -45,13 +45,12 @@ def_parse_result_t def_parse(slice_t tokens) {
     }
 }
 
-defs_t defs_parse(tokens_t tokens) {
-    slice_t tokens_slice = tokens.slice;
+defs_t defs_parse(tokens_slice_t tokens) {
     defs_t defs = arr_with_cap(def_t, 1);
-    while (tokens_slice.len > 0) {
-        def_parse_result_t result = def_parse(tokens_slice);
+    while (tokens.len > 0) {
+        def_parse_result_t result = def_parse(tokens);
         arr_push(def_t, &defs, result.def);
-        tokens_slice = subslice_after(&tokens_slice, result.len);
+        tokens = subslice_after(&tokens, result.len);
     }
     return defs;
 }

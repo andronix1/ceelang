@@ -1,5 +1,22 @@
 #include "task.h"
 
+void print_stat(stat_t src_stat) {
+	switch (src_stat->type) {
+		case STAT_DEFINE: {
+			stat_define_t *stat = (stat_define_t*)src_stat;
+			printf("\tdefine %s `", stat->define_type == STAT_DEFINE_CONST ? "constant" : "variable");
+			str_slice_dump(&stat->name.slice, stdout);
+			printf("` with type `");
+			str_slice_dump(&stat->type.slice, stdout);
+			printf("`\n");
+			break;
+		}
+		default:
+			printf("\tUNKNOWN\n");
+			break;
+	}
+}
+
 void print_def(def_t def) {
 	switch (def.content->type) {
 		case DEF_CONTENT_FUNC: {
@@ -15,7 +32,14 @@ void print_def(def_t def) {
 				str_push(&arg.type, '\0');
 				printf("%s: %s", arg.name.slice.ptr, arg.type.slice.ptr);
 			}
-			printf(")\n");
+			printf(") {");
+			if (func.stats.slice.len != 0) {
+				fputc('\n', stdout);
+				arr_foreach(stat_t, &func.stats, stat, {
+					print_stat(*stat);
+				});
+			}
+			printf("}\n");
 			break;
 		}
 		case DEF_CONTENT_CONST:

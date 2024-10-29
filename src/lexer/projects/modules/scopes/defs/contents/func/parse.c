@@ -1,23 +1,19 @@
 #include "parse.h"
 
-def_content_parse_result_t def_func_content_parse(slice_t tokens) {
-    if (tokens.len < 3) {
-        printf("ERROR: fun input tokens length < 3\n");
-        exit(1);
-    }
-    if (slice_at(token_t, &tokens, 0)->type != TOKEN_OPENING_CIRCLE_BRACE) {
-        printf("%d\n", slice_at(token_t, &tokens, 0)->type);
+def_content_parse_result_t def_func_content_parse(tokens_slice_t tokens) {
+    if (tokens_try_get(&tokens, 0)->type != TOKEN_OPENING_CIRCLE_BRACE) {
+        printf("%d\n", tokens_try_get(&tokens, 0)->type);
         printf("ERROR: expected fun args start\n");
         exit(1);
     }
     arr_t args = arr_with_cap(func_arg_t, 1);
     size_t i = 1;
     while (i < tokens.len) {
-        token_t token = slice_at(token_t, &tokens, i++);
+        token_t token = tokens_try_get(&tokens, i++);
         if (token->type == TOKEN_CLOSING_CIRCLE_BRACE) {
             break;
         }
-        token_t a = slice_at(token_t, &tokens, i + 2);
+        token_t a = tokens_try_get(&tokens, i + 2);
         if (i + 2 >= tokens.len) {
             printf("ERROR: too few tokens for arg\n");
             exit(1);
@@ -27,10 +23,10 @@ def_content_parse_result_t def_func_content_parse(slice_t tokens) {
                 printf("ERROR: starting fun in comma args\n");
                 exit(1);
             }
-            token = slice_at(token_t, &tokens, i++);
+            token = tokens_try_get(&tokens, i++);
         }
-        token_t colon_token = slice_at(token_t, &tokens, i++);
-        token_t type_token = slice_at(token_t, &tokens, i++);
+        token_t colon_token = tokens_try_get(&tokens, i++);
+        token_t type_token = tokens_try_get(&tokens, i++);
         if (token->type != TOKEN_IDENT) {
             printf("ERROR: name token is not ident\n");
             exit(1);
@@ -53,41 +49,39 @@ def_content_parse_result_t def_func_content_parse(slice_t tokens) {
         printf("ERROR: fun unexpected end\n");
         exit(1);
     }
-    // if (slice_at(token_t, &tokens, 1)->type != TOKEN_CLOSING_CIRCLE_BRACE) {
-    //     printf("ERROR: fun args not implemented\n");
-    //     exit(1);
-    // }
-    if (slice_at(token_t, &tokens, i)->type != TOKEN_OPENING_FIGURE_BRACE) {
+    if (tokens_try_get(&tokens, i)->type != TOKEN_OPENING_FIGURE_BRACE) {
         printf("ERROR: fun body start not started\n");
         exit(1);
     }
     i++;
-    size_t figure_brace_len = 1;
-    while (i < tokens.len) {
-        token_t token = slice_at(token_t, &tokens, i);
-        switch (token->type) {
-            case TOKEN_OPENING_FIGURE_BRACE:
-                figure_brace_len++;
+    token_t token;
+    stats_t stats = arr_with_cap(stat_t, 1);
+    while (i < tokens.len && (token = tokens_try_get(&tokens, i))->type != TOKEN_CLOSING_FIGURE_BRACE) {
+        size_t j = 0;
+        while (j + i < tokens.len) {
+            token_t next_token = tokens_try_get(&tokens, i + j);
+            if (next_token->type == TOKEN_SEMICOLON) {
                 break;
-            case TOKEN_CLOSING_FIGURE_BRACE:
-                figure_brace_len--;
-                break;
-            default:
-                printf("WARNING: ignoring token %d\n", token->type);
-                break;
+            } else if (next_token->type == TOKEN_CLOSING_FIGURE_BRACE) {
+                printf("ERROR: unexpected end of body(expected semicolon)!");
+                exit(1);
+            }
+            j++;
         }
-        if (figure_brace_len == 0) {
-            break;
-        }
-        i++;
+        tokens_slice_t after = subslice_after(&tokens, i);
+        tokens_slice_t stat_tokens = subslice_before(&after, j);
+        stat_t stat = stat_parse(stat_tokens);
+        arr_push(stat_t, &stats, stat);
+        i += j + 1;
     }
-    if (figure_brace_len != 0) {
-        printf("ERROR: looks like you didn't closed or didn't opened figure brace\n");
+    if (token->type != TOKEN_CLOSING_FIGURE_BRACE) {
+        printf("ERROR: looks like you didn't closed figure brace\n");
         exit(1);
     }
     def_content_func_t *content = malloc(sizeof(def_content_func_t));
     content->type = DEF_CONTENT_FUNC;
     content->args = args;
+    content->stats = stats;
     def_content_parse_result_t result = {
         .content = (def_content_t)content,
         .len = i + 1

@@ -154,8 +154,7 @@ tokens_t tokenize(FILE *stream) {
 		str_t line = str_read_line(stream);
 		str_slice_t slice = line.slice;
 		bool token_added = false;
-		while (slice.len != 0) {
-			slice = str_slice_ltrim(&slice, is_whitespace);
+		while ((slice = str_slice_ltrim(&slice, is_whitespace)).len != 0) {
 			if (str_slice_starts_with(&slice, &comment_start)) {
 				break;
 			}
@@ -179,10 +178,9 @@ tokens_t tokenize(FILE *stream) {
 				break;
 			}
 			if (!found) {
-				printf("ERROR: cannot recognize token\n");
-				putc('|', stdout);
+				printf("ERROR: cannot recognize token at line `");
 				str_slice_dump(&line.slice, stdout);
-				putc('\n', stdout);
+				printf("` with len %d\n", line.slice.len);
 				exit(1);
 			}
 		}

@@ -1,7 +1,8 @@
-fun main2(a: i32, b: str) {
-    asdsadasd
-    sadasda
-    sd;
+fun sum(a: i32, b: i32) {
+    const as: i32;
+    const bs: i32;
 }
 
-fun main(a: asdasd) {}
+fun main() {
+    
+}

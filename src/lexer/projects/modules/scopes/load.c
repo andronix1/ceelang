@@ -7,7 +7,8 @@ scope_t scope_load(char *path) {
         exit(1);
     }
 
-    defs_t defs = defs_parse(tokenize(file));
+    tokens_t tokens = tokenize(file);
+    defs_t defs = defs_parse(tokens.slice);
 
     slice_t path_slice = str_slice_from_cstr(path);
     slice_t filename = str_slice_right_part(&path_slice, '/');

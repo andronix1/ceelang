@@ -55,3 +55,8 @@ typedef token_base_t* token_t;
 typedef arr_t tokens_t;
 typedef slice_t tokens_slice_t;
 
+extern const char *str_token[TOKENS_COUNT];
+
+void token_expect_type(token_t token, token_type_t token_type);
+token_t tokens_try_get(tokens_slice_t *slice, size_t idx);
+str_t token_extract_ident(token_t token);

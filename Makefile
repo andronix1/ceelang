@@ -1,5 +1,6 @@
 OBJS = build/obj/main.o \
        build/obj/tasks.o \
+       build/obj/tokenizer/tokens.o \
        build/obj/tokenizer/task.o \
        build/obj/tokenizer/tokenize.o \
        build/obj/tokenizer/char_ext.o \
@@ -8,6 +9,8 @@ OBJS = build/obj/main.o \
        build/obj/lexer/projects/modules/scopes/load.o \
        build/obj/lexer/projects/modules/scopes/defs/parse.o \
        build/obj/lexer/projects/modules/scopes/defs/contents/func/parse.o \
+       build/obj/lexer/projects/modules/scopes/defs/contents/func/stats/parse.o \
+       build/obj/lexer/projects/modules/scopes/defs/contents/func/stats/define/parse.o \
        build/obj/core/arr.o \
        build/obj/core/str.o
 
