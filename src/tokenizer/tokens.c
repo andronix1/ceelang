@@ -36,6 +36,51 @@ token_t tokens_try_get(tokens_slice_t *slice, size_t idx) {
     return slice_at(token_t, slice, idx);
 }
 
+tokens_slice_t tokens_get_circle_scope(tokens_slice_t *slice, size_t from) {
+	size_t i = from;
+	size_t level = 0;
+	token_t token = slice_at(token_t, slice, i);
+	assert(token->type == TOKEN_OPENING_CIRCLE_BRACE);
+	do {
+		token = slice_at(token_t, slice, i);
+		if (token->type == TOKEN_OPENING_CIRCLE_BRACE) {
+			level++;
+		} else if (token->type == TOKEN_CLOSING_CIRCLE_BRACE) {
+			level--;
+		}
+		i++;
+	} while (level != 0 && i < slice->len);
+	if (token->type != TOKEN_CLOSING_CIRCLE_BRACE) {
+		printf("ERROR: scope was not closed!\n");
+		exit(1);
+	}
+	tokens_slice_t after = subslice_after(slice, from + 1);
+	return subslice_before(&after, i - from - 2);
+}
+
+tokens_slice_t tokens_before(tokens_slice_t *slice, token_type_t type) {
+	size_t i = 0;
+	for (; i < slice->len && slice_at(token_t, slice, i)->type != type; i++);
+	return subslice_before(slice, i);
+}
+
+tokens_slice_t tokens_before_circle_scoped(tokens_slice_t *slice, token_type_t type) {
+	size_t i = 0;
+	size_t level = 0;
+	for (; i < slice->len; i++) {
+		token_t token = slice_at(token_t, slice, i);
+		if (token->type == TOKEN_OPENING_CIRCLE_BRACE) {
+			level++;
+		} else if (token->type == TOKEN_CLOSING_CIRCLE_BRACE) {
+			level--;
+		}
+		if (level == 0 && token->type == type) {
+			break;
+		}
+	}
+	return subslice_before(slice, i);
+}
+
 str_t token_extract_ident(token_t token) {
 	token_expect_type(token, TOKEN_IDENT); 
 	return ((token_ident_t*)token)->ident;

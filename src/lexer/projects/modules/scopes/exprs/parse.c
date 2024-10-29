@@ -61,45 +61,56 @@ raw_expr_t raw_expr_parse(tokens_slice_t tokens) {
             }
             element = (raw_expr_element_t)expr;
         } else if (token->type == TOKEN_OPENING_CIRCLE_BRACE) {
-            size_t start = i;
-            token_t end_token;
-            size_t level = 1;
-            do {
-                i++;
-                end_token = slice_at(token_t, &tokens, i);
-                if (end_token->type == TOKEN_OPENING_CIRCLE_BRACE) {
-                    level++;
-                } else if (end_token->type == TOKEN_CLOSING_CIRCLE_BRACE) {
-                    level--;
-                }
-            } while (level != 0 && i < tokens.len);
-            if (end_token->type != TOKEN_CLOSING_CIRCLE_BRACE) {
-                printf("ERROR: expr scope was not closed!\n");
-                exit(1);
-            }
-            tokens_slice_t after = subslice_after(&tokens, start + 1);
-            tokens_slice_t scope = subslice_before(&after, i - start - 1);
-
+            tokens_slice_t scope_tokens = tokens_get_circle_scope(&tokens, i);
+            i += scope_tokens.len + 1;
             raw_scope_expr_t *expr = malloc(sizeof(raw_scope_expr_t));
             expr->base.type = RAW_EXPR_SCOPE;
-            expr->expr = raw_expr_parse(scope);
+            expr->expr = raw_expr_parse(scope_tokens);
             element = (raw_expr_element_t)expr;
         } else if (token->type == TOKEN_IDENT) {
             token_ident_t *token_ident = (token_ident_t*)token;
 
-            if (i + 1 < tokens.len) {
-                token_t next_token = slice_at(token_t, &tokens, i + 1);
-                if (next_token->type == TOKEN_OPENING_CIRCLE_BRACE) {
-                    printf("ERROR: funcalls not implemented yet!\n");
-                    exit(1);
+            if (i + 1 < tokens.len && slice_at(token_t, &tokens, i + 1)->type == TOKEN_OPENING_CIRCLE_BRACE) {
+                tokens_slice_t scope = tokens_get_circle_scope(&tokens, i + 1);
+                i += scope.len + 2;
+                funcall_args_t args = arr_with_cap(funcall_arg_t, 1);
+                while (scope.len > 0) {
+                    tokens_slice_t arg_tokens = tokens_before_circle_scoped(&scope, TOKEN_COMMA);
+                    arr_push(funcall_arg_t, &args, expr_parse(arg_tokens));
+                    if (arg_tokens.len == scope.len) {
+                        break;
+                    }
+                    scope = subslice_after(&scope, arg_tokens.len + 1);
                 }
+                
+                raw_ready_expr_t *raw_expr = malloc(sizeof(raw_ready_expr_t));
+                expr_funcall_t *expr = malloc(sizeof(expr_funcall_t));
+
+                expr->base.type = EXPR_FUNCALL;
+                expr->ident = token_ident->ident;
+                expr->args = args;
+
+                raw_expr->base.type = RAW_EXPR_READY_EXPR;
+                raw_expr->expr = (expr_t)expr;
+                element = (raw_expr_element_t)raw_expr;
+            } else {
+                raw_ready_expr_t *raw_expr = malloc(sizeof(raw_ready_expr_t));
+                expr_ident_t *expr = malloc(sizeof(expr_ident_t));
+
+                expr->base.type = EXPR_IDENT;
+                expr->ident = token_ident->ident;
+
+                raw_expr->base.type = RAW_EXPR_READY_EXPR;
+                raw_expr->expr = (expr_t)expr;
+                element = (raw_expr_element_t)raw_expr;
             }
-
+        } else if (token->type == TOKEN_UINT) {
             raw_ready_expr_t *raw_expr = malloc(sizeof(raw_ready_expr_t));
-            expr_ident_t *expr = malloc(sizeof(expr_ident_t));
+            expr_const_integer_t *expr = malloc(sizeof(expr_const_integer_t));
 
-            expr->base.type = EXPR_IDENT;
-            expr->ident = token_ident->ident;
+            expr->base.base.type = EXPR_CONST;
+            expr->base.type = EXPR_CONST_UINT;
+            expr->value = ((token_uint_t*)token)->value;
 
             raw_expr->base.type = RAW_EXPR_READY_EXPR;
             raw_expr->expr = (expr_t)expr;
@@ -121,7 +132,7 @@ expr_t raw_expr_to_expr(raw_expr_element_t element) {
     } else if (element->type == RAW_EXPR_SCOPE) {
         return expr_parse_scope(((raw_scope_expr_t*)element)->expr);
     } else {
-        printf("ERROR: invalid expr type. Must be ready or scope expr!\n");
+        printf("ERROR: invalid expr type. Must be ready or scope expr: %d!\n", element->type);
         exit(1);
     }
 }
@@ -177,12 +188,20 @@ expr_t expr_parse_scope(raw_expr_t raw_expr) {
     raw_expr_collect_binops(&raw_expr, binop_2);
 
     if (raw_expr.slice.len != 1) {
-        printf("ERROR: missing binop in expr!\n");
+        printf("ERROR: missing binop in expr(len = %d)!\n", raw_expr.slice.len);
         exit(1);
     }
 
-    raw_ready_expr_t *expr = (raw_ready_expr_t*)arr_at(raw_expr_element_t, &raw_expr, 0);
-    return expr->expr;
+    raw_expr_element_t expr = arr_at(raw_expr_element_t, &raw_expr, 0);
+    switch (expr->type) {
+        case RAW_EXPR_READY_EXPR:
+            return ((raw_ready_expr_t*)expr)->expr;
+        case RAW_EXPR_SCOPE:
+            return expr_parse_scope(((raw_scope_expr_t*)expr)->expr);
+        case RAW_EXPR_OPERATOR:
+            printf("ERROR: only operator in expr\n", raw_expr.slice.len);
+            exit(1);
+    }
 }
 
 expr_t expr_parse(tokens_slice_t tokens) {

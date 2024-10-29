@@ -1,10 +1,10 @@
 #pragma once
 
 #include "core/str.h"
-#include "expr.h"
+#include "../expr.h"
 
 typedef enum {
-    EXPR_CONST_INT
+    EXPR_CONST_UINT
 } expr_const_type_t;
 
 typedef struct {

@@ -3,6 +3,7 @@
 #include "binop.h"
 #include "tokenizer/tokens.h"
 #include "funcall.h"
+#include "consts/integer.h"
 #include "ident.h"
 #include "expr.h"
 

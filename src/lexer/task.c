@@ -1,11 +1,13 @@
 #include "task.h"
 
-void print_expr(expr_t expr) {
+void print_expr(expr_t expr, bool top) {
 	switch (expr->type) {
 		case EXPR_BINOP: {
-			printf("(");
+			if (!top) {
+				printf("(");
+			}
 			expr_binop_t *binop = (expr_binop_t*)expr;
-			print_expr(binop->left);
+			print_expr(binop->left, false);
 			switch (binop->type) {
 				case EXPR_BINOP_DIVIDE:
 					printf(" / ");
@@ -23,17 +25,42 @@ void print_expr(expr_t expr) {
 					printf(" ??? ");
 					break;
 			}
-			print_expr(binop->right);
+			print_expr(binop->right, false);
+			if (!top) {
+				printf(")");
+			}
+			break;
+		}
+		case EXPR_CONST: {
+			expr_const_t const_expr = (expr_const_t)expr;
+			switch (const_expr->type) {
+				case EXPR_CONST_UINT: {
+					expr_const_integer_t *int_const = (expr_const_integer_t*)expr;
+					printf("%d", int_const->value);
+					break;
+				}
+				default:
+					printf("???");
+					break;
+			}
+			break;
+		}
+		case EXPR_FUNCALL: {
+			expr_funcall_t *funcall = (expr_funcall_t*)expr;
+			str_slice_dump(&((expr_funcall_t*)expr)->ident.slice, stdout);
+			printf("(");
+			bool need_comma = false;
+			arr_foreach(funcall_arg_t, &funcall->args, arg, {
+				if (need_comma) {
+					printf(", ");
+				} else {
+					need_comma = true;
+				}
+				print_expr(*arg, true);
+			});
 			printf(")");
 			break;
 		}
-		case EXPR_CONST:
-			printf("<CONST>");
-			break;
-		case EXPR_FUNCALL:
-			str_slice_dump(&((expr_funcall_t*)expr)->ident.slice, stdout);
-			printf("(<ARGS>)");
-			break;
 		case EXPR_IDENT:
 			str_slice_dump(&((expr_ident_t*)expr)->ident.slice, stdout);
 			break;
@@ -44,16 +71,15 @@ void print_stat(stat_t src_stat) {
 	switch (src_stat->type) {
 		case STAT_DEFINE: {
 			stat_define_t *stat = (stat_define_t*)src_stat;
-			printf("\tdefine %s `", stat->define_type == STAT_DEFINE_CONST ? "constant" : "variable");
+			printf("\t%s ", stat->define_type == STAT_DEFINE_CONST ? "const" : "var");
 			str_slice_dump(&stat->name.slice, stdout);
-			printf("` with type `");
+			printf(": ");
 			str_slice_dump(&stat->type.slice, stdout);
-			printf("`");
 			if (stat->expr) {
-				printf(" equals ");
-				print_expr(stat->expr);
+				printf(" = ");
+				print_expr(stat->expr, true);
 			}
-			printf("\n");
+			printf(";\n");
 			break;
 		}
 		default:
