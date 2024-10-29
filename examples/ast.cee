@@ -6,5 +6,6 @@ fun main() {
     const a: i32 = 1;
     const b: i32 = 2;
     println(to_percents(a, b));
+    println("asdasdasd");
     return;
 }

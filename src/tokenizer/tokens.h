@@ -32,6 +32,7 @@ typedef enum {
 	// WITH ARGS
 	TOKEN_IDENT,
 	TOKEN_UINT,
+	TOKEN_STR,
 
 	// INTERNAL
 	TOKENS_COUNT,
@@ -50,6 +51,11 @@ typedef struct {
 	token_type_t type;
 	uint64_t value;
 } token_uint_t;
+
+typedef struct {
+	token_type_t type;
+	str_t value;
+} token_str_t;
 
 typedef token_base_t* token_t;
 

@@ -106,6 +106,17 @@ raw_expr_t raw_expr_parse(tokens_slice_t tokens) {
             raw_expr->base.type = RAW_EXPR_READY_EXPR;
             raw_expr->expr = (expr_t)expr;
             element = (raw_expr_element_t)raw_expr;
+        }  else if (token->type == TOKEN_STR) {
+            raw_ready_expr_t *raw_expr = malloc(sizeof(raw_ready_expr_t));
+            expr_const_str_t *expr = malloc(sizeof(expr_const_str_t));
+
+            expr->base.base.type = EXPR_CONST;
+            expr->base.type = EXPR_CONST_STR;
+            expr->value = ((token_str_t*)token)->value;
+
+            raw_expr->base.type = RAW_EXPR_READY_EXPR;
+            raw_expr->expr = (expr_t)expr;
+            element = (raw_expr_element_t)raw_expr;
         } else {
             printf("ERROR: unknown token in expr: %s\n", str_token[token->type]);
             exit(1);

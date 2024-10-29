@@ -20,6 +20,7 @@ const char *str_token[TOKENS_COUNT] = {
 	// WITH ARGS
 	"IDENT",
 	"UINT",
+	"STR",
 };
 
 void token_expect_type(token_t token, token_type_t token_type) {

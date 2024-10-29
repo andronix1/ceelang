@@ -17,7 +17,7 @@ def_parse_result_t def_parse(tokens_slice_t tokens) {
     }
     token_t second_token = slice_at(token_t, &tokens, 1);
     if (second_token->type != TOKEN_IDENT) {
-        printf("ERROR: invalid def tokens: second token is not ident(%d)\n", second_token->type);
+        printf("ERROR: invalid def tokens: second token is not ident(%s)\n", str_token[second_token->type]);
         exit(1);
     }
     token_ident_t ident_token = *(token_ident_t*)second_token;

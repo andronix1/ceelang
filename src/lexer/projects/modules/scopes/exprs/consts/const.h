@@ -4,7 +4,8 @@
 #include "../expr.h"
 
 typedef enum {
-    EXPR_CONST_UINT
+    EXPR_CONST_UINT,
+    EXPR_CONST_STR,
 } expr_const_type_t;
 
 typedef struct {

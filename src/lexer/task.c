@@ -56,6 +56,13 @@ void print_expr(expr_t expr, bool top) {
 					printf("%d", int_const->value);
 					break;
 				}
+				case EXPR_CONST_STR: {
+					expr_const_str_t *str_const = (expr_const_str_t*)expr;
+					fputc('\"', stdout);
+					str_slice_dump(&str_const->value.slice, stdout);
+					fputc('\"', stdout);
+					break;
+				}
 				default:
 					printf("???");
 					break;

@@ -48,20 +48,15 @@ bool is_keyword(str_slice_t *line, str_slice_t *ident) {
 token_build_result_t ident_builder(str_slice_t* slice) {
 	size_t before = 0;
 	if (!is_start_ident(str_slice_at(slice, 0))) {
-		token_build_result_t result = {
-			.err = TOKEN_BUILD_ERR_IS_NOT_THIS
-		};
-		return result;
+		return token_build_is_not_this;
 	}
 	while (is_ident(str_slice_at(slice, before))) before++;
 	str_slice_t ident = subslice_before(slice, before);
-	token_build_result_t result = {
-		.err = TOKEN_BUILD_OK,
-		.token = malloc(sizeof(token_ident_t)),
-	       	.end = before
-	};
-	result.token->type = TOKEN_IDENT;
-	((token_ident_t*)result.token)->ident = str_copy_from_slice(&ident);
+	token_build_result_t result;
+	token_build_ok_init(result, token_ident_t, before, {
+		token->type = TOKEN_IDENT;
+		token->ident = str_copy_from_slice(&ident);
+	});
 	return result;
 }
 
@@ -69,19 +64,35 @@ token_build_result_t uint_builder(str_slice_t* slice) {
 	size_t before = 0;
 	while (is_digit(str_slice_at(slice, before))) before++;
 	if (before == 0) {
-		token_build_result_t result = {
-			.err = TOKEN_BUILD_ERR_IS_NOT_THIS
-		};
-		return result;
+		return token_build_is_not_this;
 	}
 	str_slice_t num = subslice_before(slice, before);
-	token_build_result_t result = {
-		.err = TOKEN_BUILD_OK,
-		.token = malloc(sizeof(token_ident_t)),
-	       	.end = before
-	};
-	result.token->type = TOKEN_UINT;
-	((token_uint_t*)result.token)->value = str_slice_to_uint64(&num);
+	token_build_result_t result;
+	token_build_ok_init(result, token_uint_t, before, {
+		token->type = TOKEN_UINT;
+		token->value = str_slice_to_uint64(&num);
+	});
+	return result;
+}
+
+token_build_result_t str_builder(str_slice_t* slice) {
+	size_t before = 1;
+	if (str_slice_at(slice, 0) != '\"') {
+		return token_build_is_not_this;
+	}
+	while (str_slice_at(slice, before) != '\"' && before < slice->len) {
+		before++;
+	}
+	if (before == slice->len) {
+		return token_build_is_not_this;
+	}
+	str_slice_t value = subslice_after(slice, 1);
+	value = subslice_before(&value, before - 1);
+	token_build_result_t result;
+	token_build_ok_init(result, token_str_t, before + 1, {
+		token->type = TOKEN_STR;
+		token->value = str_copy_from_slice(&value);
+	});
 	return result;
 }
 
@@ -145,6 +156,7 @@ tokens_t tokenize(FILE *stream) {
 		plus_builder,
 		ident_builder,
 		uint_builder,
+		str_builder,
 		semicolon_builder
 	};
 
