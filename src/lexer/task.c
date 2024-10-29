@@ -95,8 +95,18 @@ void print_stat(stat_t src_stat) {
 			printf(";\n");
 			break;
 		}
+		case STAT_RETURN: {
+			stat_return_t *stat = (stat_return_t*)src_stat;
+			printf("\treturn");
+			if (stat->expr) {
+				printf(" ");
+				print_expr(stat->expr, true);
+			}
+			printf(";\n");
+			break;
+		}
 		default:
-			printf("\???\n");
+			printf("???\n");
 			break;
 	}
 }
@@ -116,7 +126,12 @@ void print_def(def_t def) {
 				str_push(&arg.type, '\0');
 				printf("%s: %s", arg.name.slice.ptr, arg.type.slice.ptr);
 			}
-			printf(") {");
+			printf(")");
+			if (func.return_type) {
+				printf(": ");
+				str_slice_dump(&func.return_type->slice, stdout);
+			}
+			printf(" {");
 			if (func.stats.slice.len != 0) {
 				fputc('\n', stdout);
 				arr_foreach(stat_t, &func.stats, stat, {

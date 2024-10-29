@@ -1,8 +1,10 @@
-fun sum(a: i32, b: i32) {
-    var as: i32;
-    const bs: i32 = (((a + b) - (c / d)) * i + f(d, g(a, b), s + f) / 2);
+fun to_percents(v: i32, a: i32, b: i32): i32 {
+    return (v - a) * 100 / (b - a);
 }
 
 fun main() {
-    sum(a, b);
+    const a: i32 = 1;
+    const b: i32 = 2;
+    println(to_percents(a, b));
+    return;
 }

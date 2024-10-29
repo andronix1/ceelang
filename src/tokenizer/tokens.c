@@ -6,6 +6,7 @@ const char *str_token[TOKENS_COUNT] = {
 	// WITHOUT ARGS
 	"CONST",
 	"VAR",
+	"RETURN",
 	"FUN",
 	"IF", "ELSE",
 	"OPENING_FIGURE_BRACE", "CLOSING_FIGURE_BRACE",

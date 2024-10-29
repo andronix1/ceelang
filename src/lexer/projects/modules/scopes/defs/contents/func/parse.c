@@ -49,12 +49,18 @@ def_content_parse_result_t def_func_content_parse(tokens_slice_t tokens) {
         printf("ERROR: fun unexpected end\n");
         exit(1);
     }
-    if (tokens_try_get(&tokens, i)->type != TOKEN_OPENING_FIGURE_BRACE) {
-        printf("ERROR: fun body start not started\n");
-        exit(1);
+    str_t *return_type = NULL;
+    token_t token = tokens_try_get(&tokens, i);
+    if (token->type == TOKEN_COLON) {
+        token_t type_token = tokens_try_get(&tokens, ++i);
+        return_type = malloc(sizeof(str_t));
+        str_t ident = token_extract_ident(type_token);
+        memcpy(return_type, &ident, sizeof(str_t));
+        i++;
     }
+    token = tokens_try_get(&tokens, i);
+    token_expect_type(token, TOKEN_OPENING_FIGURE_BRACE);
     i++;
-    token_t token;
     stats_t stats = arr_with_cap(stat_t, 1);
     while (i < tokens.len && (token = tokens_try_get(&tokens, i))->type != TOKEN_CLOSING_FIGURE_BRACE) {
         size_t j = 0;
@@ -82,6 +88,7 @@ def_content_parse_result_t def_func_content_parse(tokens_slice_t tokens) {
     content->type = DEF_CONTENT_FUNC;
     content->args = args;
     content->stats = stats;
+    content->return_type = return_type;
     def_content_parse_result_t result = {
         .content = (def_content_t)content,
         .len = i + 1

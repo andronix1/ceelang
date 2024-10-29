@@ -4,7 +4,8 @@
 
 typedef enum {
     STAT_DEFINE,
-    STAT_FUNCALL
+    STAT_FUNCALL,
+    STAT_RETURN,
 } stat_type_t;
 
 typedef struct {

@@ -90,6 +90,7 @@ define_keyword(var, TOKEN_VAR)
 define_keyword(fun, TOKEN_FUN)
 define_keyword(if, TOKEN_IF)
 define_keyword(else, TOKEN_ELSE)
+define_keyword(return, TOKEN_RETURN)
 define_op(equals, "==", TOKEN_EQUALS)
 define_op(not_equals, "!=", TOKEN_NOT_EQUALS)
 define_op(ge, ">=", TOKEN_GE)
@@ -116,6 +117,7 @@ tokens_t tokenize(FILE *stream) {
 	token_builder_t token_builders[] = {
 		const_builder,
 		var_builder,
+		return_builder,
 		fun_builder,
 		if_builder,
 		else_builder,
