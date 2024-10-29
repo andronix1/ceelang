@@ -57,6 +57,7 @@ slice_t subslice_before(slice_t *slice, size_t before) {
 }
 
 void *arr_get_ptr(arr_t *arr, size_t idx) {
+	assert(idx < arr->slice.len);
 	return slice_get_ptr(&arr->slice, idx);
 }
 
@@ -68,6 +69,18 @@ void arr_push_unsafe(arr_t *arr, void *value) {
 	memcpy(arr_get_ptr(arr, arr_len(arr) - 1), value, arr->slice.size);
 	//fwrite(arr->ptr, 1, arr->len, stdout);
 	//fputc('\n', stdout);
+}
+
+void arr_remove(arr_t *arr, size_t idx) {
+	assert(idx < arr->slice.len);
+	if (idx + 1 != arr->slice.len) {
+		memcpy(arr_get_ptr(arr, idx), arr_get_ptr(arr, idx + 1), (arr->slice.len - idx) * arr->slice.size);
+	}
+	arr->slice.len--;
+	if (arr->slice.len < arr->cap / 2) {
+		arr->cap /= 2;
+		arr->slice.ptr = realloc(arr->slice.ptr, arr->slice.size * arr->cap);
+	}
 }
 
 void arr_free(arr_t *arr) {

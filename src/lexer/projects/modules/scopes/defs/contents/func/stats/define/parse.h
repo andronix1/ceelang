@@ -1,5 +1,6 @@
 #pragma once
 
+#include "lexer/projects/modules/scopes/exprs/parse.h"
 #include "tokenizer/tokens.h"
 #include "core/arr.h"
 #include "define.h"

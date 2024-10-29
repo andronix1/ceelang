@@ -1,5 +1,45 @@
 #include "task.h"
 
+void print_expr(expr_t expr) {
+	switch (expr->type) {
+		case EXPR_BINOP: {
+			printf("(");
+			expr_binop_t *binop = (expr_binop_t*)expr;
+			print_expr(binop->left);
+			switch (binop->type) {
+				case EXPR_BINOP_DIVIDE:
+					printf(" / ");
+					break;
+				case EXPR_BINOP_MULTIPLY:
+					printf(" * ");
+					break;
+				case EXPR_BINOP_PLUS:
+					printf(" + ");
+					break;
+				case EXPR_BINOP_MINUS:
+					printf(" - ");
+					break;
+				default:
+					printf(" ??? ");
+					break;
+			}
+			print_expr(binop->right);
+			printf(")");
+			break;
+		}
+		case EXPR_CONST:
+			printf("<CONST>");
+			break;
+		case EXPR_FUNCALL:
+			str_slice_dump(&((expr_funcall_t*)expr)->ident.slice, stdout);
+			printf("(<ARGS>)");
+			break;
+		case EXPR_IDENT:
+			str_slice_dump(&((expr_ident_t*)expr)->ident.slice, stdout);
+			break;
+	}
+}
+
 void print_stat(stat_t src_stat) {
 	switch (src_stat->type) {
 		case STAT_DEFINE: {
@@ -8,7 +48,12 @@ void print_stat(stat_t src_stat) {
 			str_slice_dump(&stat->name.slice, stdout);
 			printf("` with type `");
 			str_slice_dump(&stat->type.slice, stdout);
-			printf("`\n");
+			printf("`");
+			if (stat->expr) {
+				printf(" equals ");
+				print_expr(stat->expr);
+			}
+			printf("\n");
 			break;
 		}
 		default:

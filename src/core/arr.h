@@ -23,10 +23,12 @@ slice_t subslice_after(slice_t *slice, size_t after);
 void *arr_get_ptr(arr_t *arr, size_t idx);
 void *slice_get_ptr(slice_t *slice, size_t idx);
 void arr_push_unsafe(arr_t *arr, void *value);
+void arr_remove(arr_t *arr, size_t idx);
 void arr_free(arr_t *arr);
 
 #define arr_len(arr) (arr)->slice.len
-#define arr_at(type, arr, i) (*(type*)arr_get_ptr(arr, i))
+#define arr_ptr_at(type, arr, i) ((type*)arr_get_ptr(arr, i))
+#define arr_at(type, arr, i) (*arr_ptr_at(type, arr, i))
 #define slice_at(type, arr, i) (*(type*)slice_get_ptr(arr, i))
 #define arr_with_cap(type, cap) arr_with_cap_sized(sizeof(type), cap)
 #define arr_push(type, arr, value) do { type _value = value; arr_push_unsafe(arr, &_value); } while(0)

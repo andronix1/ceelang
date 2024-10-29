@@ -1,6 +1,6 @@
 fun sum(a: i32, b: i32) {
     const as: i32;
-    const bs: i32;
+    const bs: i32 = ((a + b) - (c / d)) * i;
 }
 
 fun main() {

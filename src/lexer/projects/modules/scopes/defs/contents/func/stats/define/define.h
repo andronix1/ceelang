@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/str.h"
+#include "lexer/projects/modules/scopes/exprs/expr.h"
 #include "../stat.h"
 
 typedef enum {
@@ -13,4 +14,5 @@ typedef struct {
     stat_define_type_t define_type;
     str_t name;
     str_t type;
+    expr_t expr; //OPTIONAL
 } stat_define_t;

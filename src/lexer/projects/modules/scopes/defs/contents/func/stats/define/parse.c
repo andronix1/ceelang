@@ -10,10 +10,11 @@ stat_t define_stat_parse(slice_t tokens) {
     result->name = token_extract_ident(tokens_try_get(&tokens, 1));
     token_expect_type(tokens_try_get(&tokens, 2), TOKEN_COLON);
     result->type = token_extract_ident(tokens_try_get(&tokens, 3));
+    result->expr = NULL;
     if (tokens.len > 4) {
         token_expect_type(tokens_try_get(&tokens, 4), TOKEN_SET);
-        printf("ERROR: assign is not implemented!\n");
-        exit(1);
+        tokens_slice_t expr_tokens = subslice_after(&tokens, 5);
+        result->expr = expr_parse(expr_tokens);
     }
     return (stat_t)result;
 }

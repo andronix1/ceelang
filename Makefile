@@ -7,6 +7,7 @@ OBJS = build/obj/main.o \
        build/obj/tokenizer/builders.o \
        build/obj/lexer/task.o \
        build/obj/lexer/projects/modules/scopes/load.o \
+       build/obj/lexer/projects/modules/scopes/exprs/parse.o \
        build/obj/lexer/projects/modules/scopes/defs/parse.o \
        build/obj/lexer/projects/modules/scopes/defs/contents/func/parse.o \
        build/obj/lexer/projects/modules/scopes/defs/contents/func/stats/parse.o \
