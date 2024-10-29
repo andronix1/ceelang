@@ -1,7 +1,10 @@
 #pragma once
 
+#include "core/arr.h"
+
 typedef enum {
-    STAT_DEFINE
+    STAT_DEFINE,
+    STAT_FUNCALL
 } stat_type_t;
 
 typedef struct {

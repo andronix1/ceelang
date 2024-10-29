@@ -71,24 +71,15 @@ raw_expr_t raw_expr_parse(tokens_slice_t tokens) {
             token_ident_t *token_ident = (token_ident_t*)token;
 
             if (i + 1 < tokens.len && slice_at(token_t, &tokens, i + 1)->type == TOKEN_OPENING_CIRCLE_BRACE) {
-                tokens_slice_t scope = tokens_get_circle_scope(&tokens, i + 1);
-                i += scope.len + 2;
-                funcall_args_t args = arr_with_cap(funcall_arg_t, 1);
-                while (scope.len > 0) {
-                    tokens_slice_t arg_tokens = tokens_before_circle_scoped(&scope, TOKEN_COMMA);
-                    arr_push(funcall_arg_t, &args, expr_parse(arg_tokens));
-                    if (arg_tokens.len == scope.len) {
-                        break;
-                    }
-                    scope = subslice_after(&scope, arg_tokens.len + 1);
-                }
-                
+                tokens_slice_t after = subslice_after(&tokens, i);
+                tokens_slice_t funcall_tokens = tokens_before_circle_scoped_included(&after, TOKEN_CLOSING_CIRCLE_BRACE);
+                i += funcall_tokens.len + 1;
+
                 raw_ready_expr_t *raw_expr = malloc(sizeof(raw_ready_expr_t));
                 expr_funcall_t *expr = malloc(sizeof(expr_funcall_t));
 
                 expr->base.type = EXPR_FUNCALL;
-                expr->ident = token_ident->ident;
-                expr->args = args;
+                expr->funcall = funcall_parse(funcall_tokens);
 
                 raw_expr->base.type = RAW_EXPR_READY_EXPR;
                 raw_expr->expr = (expr_t)expr;

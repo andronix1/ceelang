@@ -1,6 +1,6 @@
 #include "parse.h"
 
-stat_t define_stat_parse(slice_t tokens) {
+stat_t define_stat_parse(tokens_slice_t tokens) {
     assert(tokens.len > 2);
     token_t declare_type_token = tokens_try_get(&tokens, 0);
     assert(declare_type_token->type == TOKEN_CONST || declare_type_token->type == TOKEN_VAR);

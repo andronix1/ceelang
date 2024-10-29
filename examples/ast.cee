@@ -4,5 +4,5 @@ fun sum(a: i32, b: i32) {
 }
 
 fun main() {
-    
+    sum(a, b);
 }

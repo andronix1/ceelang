@@ -1,5 +1,22 @@
 #include "task.h"
 
+void print_expr(expr_t expr, bool top);
+
+void print_funcall(funcall_t *funcall) {
+	str_slice_dump(&funcall->ident.slice, stdout);
+	printf("(");
+	bool need_comma = false;
+	arr_foreach(funcall_arg_t, &funcall->args, arg, {
+		if (need_comma) {
+			printf(", ");
+		} else {
+			need_comma = true;
+		}
+		print_expr(*arg, true);
+	});
+	printf(")");
+}
+
 void print_expr(expr_t expr, bool top) {
 	switch (expr->type) {
 		case EXPR_BINOP: {
@@ -47,18 +64,7 @@ void print_expr(expr_t expr, bool top) {
 		}
 		case EXPR_FUNCALL: {
 			expr_funcall_t *funcall = (expr_funcall_t*)expr;
-			str_slice_dump(&((expr_funcall_t*)expr)->ident.slice, stdout);
-			printf("(");
-			bool need_comma = false;
-			arr_foreach(funcall_arg_t, &funcall->args, arg, {
-				if (need_comma) {
-					printf(", ");
-				} else {
-					need_comma = true;
-				}
-				print_expr(*arg, true);
-			});
-			printf(")");
+			print_funcall(&funcall->funcall);
 			break;
 		}
 		case EXPR_IDENT:
@@ -82,8 +88,15 @@ void print_stat(stat_t src_stat) {
 			printf(";\n");
 			break;
 		}
+		case STAT_FUNCALL: {
+			stat_funcall_t *stat = (stat_funcall_t*)src_stat;
+			printf("\t");
+			print_funcall(&stat->funcall);
+			printf(";\n");
+			break;
+		}
 		default:
-			printf("\tUNKNOWN\n");
+			printf("\???\n");
 			break;
 	}
 }

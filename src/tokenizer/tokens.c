@@ -64,7 +64,7 @@ tokens_slice_t tokens_before(tokens_slice_t *slice, token_type_t type) {
 	return subslice_before(slice, i);
 }
 
-tokens_slice_t tokens_before_circle_scoped(tokens_slice_t *slice, token_type_t type) {
+tokens_slice_t tokens_before_circle_scoped_maybe_included(tokens_slice_t *slice, token_type_t type, bool include) {
 	size_t i = 0;
 	size_t level = 0;
 	for (; i < slice->len; i++) {
@@ -75,10 +75,19 @@ tokens_slice_t tokens_before_circle_scoped(tokens_slice_t *slice, token_type_t t
 			level--;
 		}
 		if (level == 0 && token->type == type) {
+			if (include) i++;
 			break;
 		}
 	}
 	return subslice_before(slice, i);
+}
+
+tokens_slice_t tokens_before_circle_scoped_included(tokens_slice_t *slice, token_type_t type) {
+	return tokens_before_circle_scoped_maybe_included(slice, type, true);
+}
+
+tokens_slice_t tokens_before_circle_scoped(tokens_slice_t *slice, token_type_t type) {
+	return tokens_before_circle_scoped_maybe_included(slice, type, false);
 }
 
 str_t token_extract_ident(token_t token) {

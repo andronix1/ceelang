@@ -8,10 +8,12 @@ OBJS = build/obj/main.o \
        build/obj/lexer/task.o \
        build/obj/lexer/projects/modules/scopes/load.o \
        build/obj/lexer/projects/modules/scopes/exprs/parse.o \
+       build/obj/lexer/projects/modules/scopes/exprs/funcall/parse.o \
        build/obj/lexer/projects/modules/scopes/defs/parse.o \
        build/obj/lexer/projects/modules/scopes/defs/contents/func/parse.o \
        build/obj/lexer/projects/modules/scopes/defs/contents/func/stats/parse.o \
        build/obj/lexer/projects/modules/scopes/defs/contents/func/stats/define/parse.o \
+       build/obj/lexer/projects/modules/scopes/defs/contents/func/stats/funcall/parse.o \
        build/obj/core/arr.o \
        build/obj/core/str.o
 
