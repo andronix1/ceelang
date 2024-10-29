@@ -73,7 +73,7 @@ raw_expr_t raw_expr_parse(tokens_slice_t tokens) {
             if (i + 1 < tokens.len && slice_at(token_t, &tokens, i + 1)->type == TOKEN_OPENING_CIRCLE_BRACE) {
                 tokens_slice_t after = subslice_after(&tokens, i);
                 tokens_slice_t funcall_tokens = tokens_before_circle_scoped_included(&after, TOKEN_CLOSING_CIRCLE_BRACE);
-                i += funcall_tokens.len + 1;
+                i += funcall_tokens.len - 1;
 
                 raw_ready_expr_t *raw_expr = malloc(sizeof(raw_ready_expr_t));
                 expr_funcall_t *expr = malloc(sizeof(expr_funcall_t));
