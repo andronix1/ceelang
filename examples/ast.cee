@@ -1,6 +1,11 @@
 fun to_percents(v: i32, a: i32, b: i32): i32 {
+    if a - b {
+        return 16;
+    }
     if a == b {
         return 11;
+    } else {
+        return 12
     }
 }
 

@@ -118,7 +118,18 @@ void print_stat(stat_t src_stat) {
 				printf("\t");
 				print_stat(*stat);
 			});
-			printf("\t}\n");
+			printf("\t}");
+			if (stat->else_stats) {
+				printf(" else {\n");
+				stats_t *else_stats = stat->else_stats;
+				arr_foreach(stat_t, else_stats, stat, {
+					printf("\t");
+					print_stat(*stat);
+				});
+				printf("\t}\n");
+			} else {
+				printf("\n");
+			}
 			break;
 		}
 		case STAT_RETURN: {
