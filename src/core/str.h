@@ -8,6 +8,7 @@
 ARR_TYPED_ALIAS_DEFINE(str, char)
 
 str_t str_read_line(FILE *stream);
+str_t str_clone(str_t *target);
 uint64_t str_slice_to_uint64(str_slice_t *slice);
 str_slice_t str_slice_from_cstr(const char *cstr);
 bool str_slice_starts_with(str_slice_t *slice, str_slice_t *other);

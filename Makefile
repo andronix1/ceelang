@@ -10,7 +10,17 @@ OBJS = build/obj/main.o \
        build/obj/tokenizer/readers/ident.o \
        build/obj/tokenizer/tokens.o \
        build/obj/tokenizer/tokenize.o \
-       build/obj/tokenizer/task.o
+       build/obj/tokenizer/task.o \
+       build/obj/lexer/modules/module.o \
+       build/obj/lexer/modules/scopes/load.o \
+       build/obj/lexer/modules/scopes/scope.o \
+       build/obj/lexer/modules/scopes/defs/def.o \
+       build/obj/lexer/modules/scopes/defs/parse.o \
+       build/obj/lexer/modules/scopes/defs/reader.o \
+       build/obj/lexer/modules/scopes/defs/contents/content.o \
+       build/obj/lexer/modules/scopes/defs/contents/func/args.o \
+       build/obj/lexer/modules/scopes/defs/contents/func/stats/stat.o \
+       build/obj/lexer/task.o
 
 link: build-obj
 	gcc $(OBJS) -o build/cee

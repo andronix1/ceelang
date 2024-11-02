@@ -15,4 +15,8 @@ SEALED_FREE_IMPL(token, {
     SEALED_SHOULD_BE_FREED(token, TOKEN_STR, str)
 }, 29);
 
-ARR_TYPED_ALIAS_IMPL(tokens, token_t, token_free);
+void token_free_wrap(token_t *token) {
+    token_free(*token);
+}
+
+ARR_TYPED_ALIAS_IMPL(tokens, token_t, token_free_wrap);

@@ -30,7 +30,7 @@ DEFINE_SYMBOL(opening_figure_brace, TOKEN_OPENING_FIGURE_BRACE, "{")
 DEFINE_SYMBOL(closing_circle_brace, TOKEN_CLOSING_CIRCLE_BRACE, ")")
 DEFINE_SYMBOL(closing_figure_brace, TOKEN_CLOSING_FIGURE_BRACE, "}")
 
-token_reader_t readers[] = {
+token_reader_t token_readers[] = {
 	// keywords
 	keyword_const_reader, keyword_var_reader,
 	keyword_fun_reader,
@@ -59,7 +59,7 @@ token_reader_t readers[] = {
 	ident_reader,
 	uint_reader,
 };
-#define READERS_COUNT (sizeof(readers) / sizeof(readers[0]))
+#define READERS_COUNT (sizeof(token_readers) / sizeof(token_readers[0]))
 
 void tokenize_line(str_slice_t slice, message_base_t base, result_t *result, tokens_t *tokens) {
 	size_t character_number = 0;
@@ -71,8 +71,9 @@ void tokenize_line(str_slice_t slice, message_base_t base, result_t *result, tok
 			break;
 		}
 		character_number = (slice.len - cur_slice.len);
+		base.location.character = character_number;
 		for (size_t i = 0; i < READERS_COUNT; i++) {
-			token_read_result_t read_result = readers[i](&cur_slice);
+			token_read_result_t read_result = token_readers[i](&cur_slice);
 			SEALED_ASSERT_ALL_USED(token_read_result, 3);
 			if (read_result->kind == TOKEN_READ_NOT_THIS) {
 				token_read_result_free(read_result);
@@ -84,6 +85,7 @@ void tokenize_line(str_slice_t slice, message_base_t base, result_t *result, tok
 				found = true;
 			} else if (read_result->kind == TOKEN_READ_OK) {
 				token_read_result_ok_t *ok = token_read_result_as_ok(read_result);
+				ok->token->location = base.location;
 				arr_push(tokens, &ok->token);
 				character_number += ok->len;
 				if (ok->has_warning) {

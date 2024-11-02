@@ -11,6 +11,10 @@ str_t str_read_line(FILE *stream) {
 	return result;
 }
 
+str_t str_clone(str_t *target) {
+	return str_copy_from_slice(&target->slice);
+}
+
 uint64_t str_slice_to_uint64(str_slice_t *slice) {
 	uint64_t result = 0;
 	SLICE_FOREACH(slice, char, c, {

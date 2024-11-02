@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "tokenizer/task.h"
-// #include "lexer/task.h"
+#include "lexer/task.h"
 #include "tasks.h"
 
 task_t tasks[] = {
@@ -12,12 +12,12 @@ task_t tasks[] = {
 		.args = "<file>",
 		.func = tokens_task
 	},
-	// {
-	// 	.name = "ast",
-	// 	.description = "show file ast",
-	// 	.args = "<file>",
-	// 	.func = ast_task
-	// }
+	{
+		.name = "ast",
+		.description = "show file ast",
+		.args = "<file>",
+		.func = ast_task
+	}
 };
 #define TASKS_LEN sizeof(tasks) / sizeof(tasks[0])
 

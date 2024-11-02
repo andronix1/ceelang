@@ -26,6 +26,9 @@ SEALED_CHILD_DEFINE(message, MESSAGE_WARNING, warning,
 
 typedef enum {
     ERROR_UNKNOWN_TOKEN,
+    ERROR_MISSING_TOKEN,
+    ERROR_INVALID_TOKEN,
+    ERROR_NOT_IMPLEMENTED,
     error_variants_count
 } error_type_t;
 

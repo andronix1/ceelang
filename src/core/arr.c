@@ -52,8 +52,8 @@ slice_t *arr_slice(arr_t *arr) {
 
 void arr_free(arr_t *arr) {
     if (arr->free) {
-        SLICE_FOREACH(&arr->slice, void*, element, {
-            arr->free(*element);
+        SLICE_FOREACH(&arr->slice, void, element, {
+            arr->free(element);
         });
     }
     free(arr->slice.ptr);

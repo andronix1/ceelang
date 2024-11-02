@@ -1,6 +1,8 @@
 #include "messages.h"
 
-SEALED_BASE_IMPL_FREE(message, { arr_free(&self->file); });
+SEALED_BASE_IMPL_FREE(message, { 
+    str_free(&self->file);
+});
 SEALED_FREE_IMPL_WITH_BASE_FREE(message, {}, 2);
 
 SEALED_CHILD_IMPL(message, error);

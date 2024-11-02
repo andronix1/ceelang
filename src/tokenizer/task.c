@@ -32,8 +32,8 @@ task_err_t tokens_task(int argc, char **argv) {
 		return TASK_ERR_INVALID_USAGE;
 	}
 	
-	FILE *src = fopen(file_path, "r");
-	if (!src) {
+	FILE *file = fopen(file_path, "r");
+	if (!file) {
 		printf("ERROR: failed to open file: %s\n", strerror(errno));
 		return TASK_ERR_INTERNAL;
 	}
@@ -42,7 +42,8 @@ task_err_t tokens_task(int argc, char **argv) {
 	tokens_t tokens = tokens_new_with_cap(1);
 	str_slice_t file_path_slice = str_slice_from_cstr(file_path);
 	message_base_t message_base = message_base_new_simple(str_copy_from_slice(&file_path_slice), location_new(0, 0));
-	tokenize(src, message_base, &result, &tokens);
+	tokenize(file, message_base, &result, &tokens);
+	fclose(file);
 
 	result_print(&result);
 	printf("found tokens:\n");
@@ -62,6 +63,5 @@ task_err_t tokens_task(int argc, char **argv) {
 	result_free(&result);
 	arr_free(&tokens);
 
-	fclose(src);
 	return TASK_OK;
 }

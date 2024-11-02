@@ -10,6 +10,8 @@ void result_push(result_t *result, message_t message) {
 
 void message_dump(message_t message) {
 	SEALED_ASSERT_ALL_USED(message, 2);
+	str_slice_dump(&message->file.slice, stdout);
+	printf(":%d:%d: ", message->location.line + 1, message->location.character + 1);
 	switch (message->kind) {
 		case MESSAGE_ERROR: {
 			printf("ERROR: %d\n", message_as_error(message)->type);
