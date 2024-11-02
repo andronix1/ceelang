@@ -1,41 +1,33 @@
 #pragma once
 
-#include <malloc.h>
+#include <stddef.h>
 #include <assert.h>
+#include <malloc.h>
 #include <string.h>
+#include "slice.h"
+
+#define DEFAULT_CAPACITY 1
 
 typedef struct {
-	size_t len;
-	size_t size;
-	void *ptr;
-} slice_t;
-
-typedef struct {
-	slice_t slice;
-	size_t cap;
+    slice_t slice;
+    size_t cap;
+    void (*free)(void*);
 } arr_t;
 
-void arr_reserve(arr_t *arr, size_t cap);
-arr_t arr_with_cap_sized(size_t size, size_t cap);
-arr_t arr_copy_from_slice(slice_t *slice);
-slice_t subslice_before(slice_t *slice, size_t before);
-slice_t subslice_after(slice_t *slice, size_t after);
-void *arr_get_ptr(arr_t *arr, size_t idx);
-void *slice_get_ptr(slice_t *slice, size_t idx);
-void arr_push_unsafe(arr_t *arr, void *value);
-void arr_remove(arr_t *arr, size_t idx);
+arr_t arr_new(size_t len, size_t capacity, void (*free)(void*));
+arr_t arr_copy_from_slice(slice_t* slice, void (*free)(void*));
+void arr_push(arr_t *arr, void *value);
+void arr_remove_at(arr_t *arr, size_t idx);
+slice_t *arr_slice(arr_t *arr);
 void arr_free(arr_t *arr);
 
-#define arr_len(arr) (arr)->slice.len
-#define arr_ptr_at(type, arr, i) ((type*)arr_get_ptr(arr, i))
-#define arr_at(type, arr, i) (*arr_ptr_at(type, arr, i))
-#define slice_at(type, arr, i) (*(type*)slice_get_ptr(arr, i))
-#define arr_with_cap(type, cap) arr_with_cap_sized(sizeof(type), cap)
-#define arr_push(type, arr, value) do { type _value = value; arr_push_unsafe(arr, &_value); } while(0)
-#define arr_foreach(type, arr, value, body) do { \
-		for (size_t value##_idx = 0; value##_idx < arr_len(arr); value##_idx++) {	\
-			type *value = (type*)arr_get_ptr(arr, value##_idx);			\
-			body 								\
-		} 									\
-	} while(0)
+#define ARR_TYPED_ALIAS_DEFINE(name, type) \
+    SLICE_TYPED_ALIAS_DEFINE(name##_slice, type) \
+    typedef arr_t name##_t; \
+    name##_t name##_new_with_cap(size_t capacity); \
+    name##_t name##_copy_from_slice(name##_slice_t* slice);
 
+#define ARR_TYPED_ALIAS_IMPL(name, type, free) \
+    name##_t name##_new_with_cap(size_t capacity) { return arr_new(sizeof(type), capacity, (void(*)(void*))free); } \
+    name##_t name##_copy_from_slice(name##_slice_t* slice) { return arr_copy_from_slice(slice, (void(*)(void*))free); } \
+    SLICE_TYPED_ALIAS_IMPL(name##_slice, type)

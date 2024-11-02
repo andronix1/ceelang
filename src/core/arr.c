@@ -1,88 +1,60 @@
 #include "arr.h"
 
-void arr_reserve(arr_t *arr, size_t cap) {
-	assert(arr->cap < cap);
-	arr->slice.ptr = realloc(arr->slice.ptr, arr->slice.size * cap);
-	arr->cap = cap;
+arr_t arr_new(size_t element_size, size_t cap, void (*free)(void*)) {
+    arr_t result = {
+        .slice = slice_mem(element_size, 0, malloc(element_size * cap)),
+        .cap = cap,
+        .free = free
+    };
+    return result;
 }
 
-arr_t arr_with_cap_sized(size_t size, size_t cap) {
-	arr_t result = {
-		.slice = {
-			.len = 0,
-			.ptr = malloc(sizeof(size) * cap),
-			.size = size,
-		},
-		.cap = cap,
-	};
-	return result;
+arr_t arr_realloc(arr_t *arr, size_t cap) {
+    arr->slice.ptr = realloc(arr->slice.ptr, arr->slice.element_size * cap);
+    arr->cap = cap;
 }
 
-arr_t arr_copy_from_slice(slice_t *slice) {
-	arr_t result = {
-		.slice = {
-			.len = slice->len,
-			.size = slice->size,
-			.ptr = malloc(slice->size * slice->len)
-		},
-		.cap = slice->len == 0 ? 1 : slice->len
-	};
-	memcpy(result.slice.ptr, slice->ptr, slice->size * slice->len);
-	return result;
+void arr_push(arr_t *arr, void *value) {
+    if (arr->slice.len == arr->cap) {
+        arr_realloc(arr, arr->cap * 2);
+    }
+    memcpy(slice_raw_ptr_to(&arr->slice, arr->slice.len), value, arr->slice.element_size);
+    arr->slice.len++;
 }
 
-void *slice_get_ptr(slice_t *slice, size_t idx) {
-	assert(slice->len >= idx);
-	return slice->ptr + idx * slice->size;
+void arr_remove_at(arr_t *arr, size_t idx) {
+    assert(idx < arr->slice.len);
+    arr->slice.len--;
+    if (arr->slice.len != idx) {
+        memcpy(slice_raw_ptr_to(&arr->slice, idx), slice_raw_ptr_to(&arr->slice, idx + 1), arr->slice.element_size * (arr->slice.len - idx));
+    }
+    if (arr->cap > 1 && arr->slice.len * 2 < arr->cap) {
+        arr_realloc(arr, arr->cap / 2);
+    }
 }
 
-slice_t subslice_after(slice_t *slice, size_t after) {
-	assert(slice->len >= after);
-	slice_t result = {
-		.len = slice->len - after,
-		.size = slice->size,
-		.ptr = slice_get_ptr(slice, after),
-	};
-	return result;
+arr_t arr_copy_from_slice(slice_t* slice, void (*free)(void*)) {
+    if (slice->len == 0) {
+        return arr_new(slice->element_size, DEFAULT_CAPACITY, free);
+    }
+    arr_t result = {
+        .slice = slice_mem(slice->element_size, slice->len, malloc(slice->element_size * slice->len)),
+        .cap = slice->len,
+        .free = free
+    };
+    memcpy(result.slice.ptr, slice->ptr, slice->element_size * slice->len);
+    return result;
 }
 
-slice_t subslice_before(slice_t *slice, size_t before) {
-	assert(slice->len >= before);
-	slice_t result = {
-		.len = before,
-		.size = slice->size,
-		.ptr = slice->ptr,
-	};
-	return result;
-}
-
-void *arr_get_ptr(arr_t *arr, size_t idx) {
-	assert(idx < arr->slice.len);
-	return slice_get_ptr(&arr->slice, idx);
-}
-
-void arr_push_unsafe(arr_t *arr, void *value) {
-	arr->slice.len++;
-	if (arr_len(arr) >= arr->cap) {
-		arr_reserve(arr, arr->cap * 2);
-	}
-	memcpy(arr_get_ptr(arr, arr_len(arr) - 1), value, arr->slice.size);
-	//fwrite(arr->ptr, 1, arr->len, stdout);
-	//fputc('\n', stdout);
-}
-
-void arr_remove(arr_t *arr, size_t idx) {
-	assert(idx < arr->slice.len);
-	if (idx + 1 != arr->slice.len) {
-		memcpy(arr_get_ptr(arr, idx), arr_get_ptr(arr, idx + 1), (arr->slice.len - idx) * arr->slice.size);
-	}
-	arr->slice.len--;
-	if (arr->slice.len < arr->cap / 2) {
-		arr->cap /= 2;
-		arr->slice.ptr = realloc(arr->slice.ptr, arr->slice.size * arr->cap);
-	}
+slice_t *arr_slice(arr_t *arr) {
+    return &arr->slice;
 }
 
 void arr_free(arr_t *arr) {
-	free(arr->slice.ptr);
+    if (arr->free) {
+        SLICE_FOREACH(&arr->slice, void*, element, {
+            arr->free(*element);
+        });
+    }
+    free(arr->slice.ptr);
 }

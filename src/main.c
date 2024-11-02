@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "tokenizer/task.h"
-#include "lexer/task.h"
+// #include "lexer/task.h"
 #include "tasks.h"
 
 task_t tasks[] = {
@@ -12,19 +12,19 @@ task_t tasks[] = {
 		.args = "<file>",
 		.func = tokens_task
 	},
-	{
-		.name = "ast",
-		.description = "show file ast",
-		.args = "<file>",
-		.func = ast_task
-	}
+	// {
+	// 	.name = "ast",
+	// 	.description = "show file ast",
+	// 	.args = "<file>",
+	// 	.func = ast_task
+	// }
 };
-#define tasks_len sizeof(tasks) / sizeof(tasks[0])
+#define TASKS_LEN sizeof(tasks) / sizeof(tasks[0])
 
 void usage() {
 	printf("usage: ./cee <task> [...args]\n");
 	printf("tasks:\n");
-	for (size_t i = 0; i < tasks_len; i++) {
+	for (size_t i = 0; i < TASKS_LEN; i++) {
 		task_t task = tasks[i];
 		printf("\t%s", task.name);
 		if (task.args[0] != '\0') {
@@ -35,7 +35,7 @@ void usage() {
 }
 
 int main(int argc, char **argv) {
-	task_err_t err = run_task(tasks, tasks_len, argc, argv);
+	task_err_t err = run_task(tasks, TASKS_LEN, argc, argv);
 	switch (err) {
 	case TASK_OK:
 		break;

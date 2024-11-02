@@ -1,5 +1,7 @@
 #pragma once
 
+#include <errno.h>
+#include "tokens.h"
 #include "tokenize.h"
 #include "tasks.h"
 

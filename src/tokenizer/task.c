@@ -1,16 +1,29 @@
 #include "task.h"
 
-const char *tokens_str[TOKENS_COUNT] = {
-	";\n",
-	"const", "var", "fun", "if", "else",
-	"{\n", "}\n",
-	"(", ")",
-	",", ":",
-	"==", "!=", ">=", "<=", ">", "<", "=",
-	"%", "/", "*", "-", "+",
-	"<IDENT>",
-	"<UINT>"
-};
+void token_dump(token_t token) {
+	SEALED_ASSERT_ALL_USED(token, 29);
+	static const char *tokens_str[token_variants_count] = {
+		";", ",", ":",
+		"const", "var", "fun", "=",
+		"return",
+		"if", "elif", "else",
+		"{", "}",
+		"(", ")",
+		"==", "!=", ">=", "<=", ">", "<",
+		"/", "*", "-", "+", "%",
+	};
+	if (token->kind == TOKEN_IDENT) {
+		str_slice_dump(&token_as_ident(token)->ident.slice, stdout);
+	} else if (token->kind == TOKEN_STR) {
+		fputc('\"', stdout);
+		str_slice_dump(&token_as_str(token)->value.slice, stdout);
+		fputc('\"', stdout);
+	}  else if (token->kind == TOKEN_UINT) {
+		printf("%d", token_as_uint(token)->value);
+	} else {
+		printf("%s", tokens_str[token->kind]);
+	}
+}
 
 task_err_t tokens_task(int argc, char **argv) {
 	const char *file_path = next_arg(&argc, &argv);
@@ -25,37 +38,28 @@ task_err_t tokens_task(int argc, char **argv) {
 		return TASK_ERR_INTERNAL;
 	}
 
-	tokens_t tokens = tokenize(src);
+	result_t result = result_new();
+	tokens_t tokens = tokens_new_with_cap(1);
+	str_slice_t file_path_slice = str_slice_from_cstr(file_path);
+	message_base_t message_base = message_base_new_simple(str_copy_from_slice(&file_path_slice), location_new(0, 0));
+	tokenize(src, message_base, &result, &tokens);
 
-	if (arr_len(&tokens) == 0) {
-		printf("no tokens available\n");
+	result_print(&result);
+	printf("found tokens:\n");
+	SLICE_FOREACH(&tokens.slice, token_t, token, {
+		token_dump(*token);
+		fputc(' ', stdout);
+	});
+	printf("\n-------------\n");
+
+	if (result.success) {
+		printf("Tokenizing finished!\n");
 	} else {
-		arr_foreach(token_t, &tokens, token, {
-			token_type_t token_type = (*token)->type;
-			switch (token_type) {
-				case TOKEN_IDENT:
-					token_ident_t *token_ident = (token_ident_t*)*token;
-					str_push(&token_ident->ident, '\0');
-					printf("%s ", token_ident->ident.slice.ptr);
-					break;
-				case TOKEN_UINT:
-					token_uint_t *token_uint = (token_uint_t*)*token;
-					printf("%d ", token_uint->value);
-					break;
-				default:
-					printf("%s", tokens_str[(*token)->type]);
-					if (
-						token_type != TOKEN_SEMICOLON &&
-						token_type != TOKEN_OPENING_FIGURE_BRACE &&
-						token_type != TOKEN_CLOSING_FIGURE_BRACE 
-					) {
-						putc(' ', stdout);
-					}
-					break;
-			}
-		});
+		printf("Tokenizing failed!\n");
 	}
 
+	message_free_base(&message_base);
+	result_free(&result);
 	arr_free(&tokens);
 
 	fclose(src);

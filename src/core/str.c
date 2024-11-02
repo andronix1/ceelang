@@ -1,7 +1,9 @@
 #include "str.h"
 
-str_t str_read_line(FILE* stream) {
-	str_t result = str_with_cap(1);
+ARR_TYPED_ALIAS_IMPL(str, char, NULL)
+
+str_t str_read_line(FILE *stream) {
+	str_t result = str_new();
 	char c;
 	while ((c = fgetc(stream)) != '\n' && !feof(stream)) {
 		str_push(&result, c);
@@ -9,43 +11,49 @@ str_t str_read_line(FILE* stream) {
 	return result;
 }
 
-str_slice_t str_slice_ltrim(str_slice_t *slice, bool(*f)(char)) {
-	size_t start = 0;
-	while (start < slice->len && f(str_slice_at(slice, start))) start++;
-	return subslice_after(slice, start);
+uint64_t str_slice_to_uint64(str_slice_t *slice) {
+	uint64_t result = 0;
+	SLICE_FOREACH(slice, char, c, {
+		result *= 10;
+		result += *c - '0';
+	});
+	return result;
 }
 
-str_slice_t str_slice_right_part(str_slice_t *slice, char c) {
-	size_t i = slice->len - 1;
-	while (i >= 1 && str_slice_at(slice, i) != c) i--;
+str_slice_t str_slice_from_cstr(const char *cstr) {
+	return slice_mem(sizeof(char), strlen(cstr), (void*)cstr);
+}
+
+str_slice_t str_slice_trim_left(str_slice_t *slice, bool(*filter)(char)) {
+	size_t i = 0;
+	while (i < slice->len && filter(*str_slice_at(slice, i))) i++;
 	return subslice_after(slice, i);
 }
 
-str_slice_t str_slice_from_cstr(char *cstr) {
-	str_slice_t result = {
-		.size = 1,
-		.len = strlen(cstr),
-		.ptr = cstr
-	};
-	return result;
+str_slice_t str_slice_after_char(str_slice_t *slice, bool(*filter)(char)) {
+	size_t i = 0;
+	while (i < slice->len && !filter(*str_slice_at(slice, i))) i++;
+	return subslice_after(slice, i);
 }
 
-bool str_slice_starts_with(str_slice_t *slice, str_slice_t *pattern) {
-	if (slice->len < pattern->len) {
+str_slice_t str_slice_before_char(str_slice_t *slice, bool(*filter)(char)) {
+	size_t i = 0;
+	while (i < slice->len && !filter(*str_slice_at(slice, i))) i++;
+	return subslice_before(slice, i);
+}
+
+bool str_slice_starts_with(str_slice_t *slice, str_slice_t *other) {
+	if (other->len > slice->len) {
 		return false;
 	}
-	return !memcmp(slice->ptr, pattern->ptr, pattern->len);
-}
-
-void str_slice_dump(str_slice_t *str, FILE *stream) {
-	fwrite(str->ptr, 1, str->len, stream);
-}
-
-uint64_t str_slice_to_uint64(str_slice_t *slice) {
-	uint64_t result = 0;
-	for (size_t i = 0; i < slice->len; i++) {
-		result *= 10;
-		result += str_slice_at(slice, i) - '0';
+	for (size_t i = 0; i < other->len; i++) {
+		if (*str_slice_at(other, i) != *str_slice_at(slice, i)) {
+			return false;
+		}
 	}
-	return result;
+	return true;
+}
+
+str_slice_t str_slice_dump(str_slice_t *slice, FILE* stream) {
+	fwrite(slice->ptr, slice->element_size, slice->len, stream);
 }
