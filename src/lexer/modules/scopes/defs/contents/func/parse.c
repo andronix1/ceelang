@@ -68,11 +68,13 @@ def_read_result_t fun_parse(tokens_slice_t *tokens, message_base_t base, result_
     len += scope.len + 1;
 
     // STATS PARSE
+    stats_t stats = stats_new_with_cap(1);
+    stats_parse(scope, base, result, &stats);
 
     str_t fun_name = token_as_ident(fun_name_token)->ident;
 
     def_t *def = malloc(sizeof(def_t));
-    def->content = (def_content_t)def_content_func_new(def_content_base_new_simple(), return_type, args, stats_new_with_cap(1));
+    def->content = (def_content_t)def_content_func_new(def_content_base_new_simple(), return_type, args, stats);
     def->name = str_clone(&fun_name);
 
     return (def_read_result_t)def_read_result_ok_new(read_result_base_new_simple(), def, len);

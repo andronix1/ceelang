@@ -10,7 +10,7 @@ void defs_parse(tokens_slice_t slice, message_base_t base, result_t *result, def
 	READING_LOOP {
 		READING_ITER_SETUP;
 		READING_SETUP_FINISH;
-		base.location.character = i;
+		base.location = (*tokens_slice_at(&slice, i))->location;
 		READERS_LOOP(DEF_READERS_COUNT) {
 			READERS_TRY_READ(def_readers) {
                 def_read_result_ok_t *ok = read_result_as_ok(read_result);
@@ -20,6 +20,9 @@ void defs_parse(tokens_slice_t slice, message_base_t base, result_t *result, def
 			}
 			READERS_READ_END;
 		}
-		READING_ITER_FINISH;
+		READING_ITER_FINISH(ERROR_INVALID_TOKEN);
+        READER_CHANGE_POS_ON_NOT_FOUND {
+            i++;
+        }
 	}
 }

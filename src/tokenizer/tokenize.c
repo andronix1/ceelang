@@ -80,7 +80,10 @@ void tokenize_line(str_slice_t slice, message_base_t base, result_t *result, tok
 			}
 			READERS_READ_END;
 		}
-		READING_ITER_FINISH;
+		READING_ITER_FINISH(ERROR_UNKNOWN_TOKEN);
+        READER_CHANGE_POS_ON_NOT_FOUND {
+            i++;
+        }
 	}
 }
 

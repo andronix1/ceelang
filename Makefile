@@ -21,6 +21,7 @@ OBJS = build/obj/main.o \
        build/obj/lexer/modules/scopes/defs/contents/func/parse.o \
        build/obj/lexer/modules/scopes/defs/contents/func/args.o \
        build/obj/lexer/modules/scopes/defs/contents/func/stats/stat.o \
+       build/obj/lexer/modules/scopes/defs/contents/func/stats/parse.o \
        build/obj/lexer/task.o
 
 link: build-obj

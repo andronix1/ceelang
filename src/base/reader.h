@@ -46,7 +46,8 @@ typedef read_result_t (*reader_t)(slice_t *slice, message_base_t base, result_t 
 #define READING_LOOP while (i < slice.len)
 
 #define READING_ITER_SETUP bool found = false, invalid_last_time = false; str_slice_t cur_slice = subslice_after(&slice, i)
-#define READING_ITER_FINISH if (!found) { if (!invalid_last_time) { PUSH_ERROR(ERROR_UNKNOWN_TOKEN); invalid_last_time = true; } i++; } else { invalid_last_time = false; }
+#define READING_ITER_FINISH(not_found_error) if (!found) { if (!invalid_last_time) { PUSH_ERROR(not_found_error); invalid_last_time = true; } } else { invalid_last_time = false; }
+#define READER_CHANGE_POS_ON_NOT_FOUND if (!found) 
 
 #define READERS_LOOP(count) for (size_t rid = 0; rid < count; rid++)
 #define READERS_TRY_READ(_readers) reader_t *readers = _readers; read_result_t read_result = readers[rid](&cur_slice, base, result); \
