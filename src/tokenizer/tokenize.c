@@ -30,7 +30,7 @@ DEFINE_SYMBOL(opening_figure_brace, TOKEN_OPENING_FIGURE_BRACE, "{")
 DEFINE_SYMBOL(closing_circle_brace, TOKEN_CLOSING_CIRCLE_BRACE, ")")
 DEFINE_SYMBOL(closing_figure_brace, TOKEN_CLOSING_FIGURE_BRACE, "}")
 
-token_reader_t token_readers[] = {
+reader_t token_readers[] = {
 	// keywords
 	keyword_const_reader, keyword_var_reader,
 	keyword_fun_reader,
@@ -59,54 +59,28 @@ token_reader_t token_readers[] = {
 	ident_reader,
 	uint_reader,
 };
-#define READERS_COUNT (sizeof(token_readers) / sizeof(token_readers[0]))
+#define TOKEN_READERS_COUNT (sizeof(token_readers) / sizeof(token_readers[0]))
 
 void tokenize_line(str_slice_t slice, message_base_t base, result_t *result, tokens_t *tokens) {
-	size_t character_number = 0;
-	while (character_number < slice.len) {
-		bool found = false, invalid_last_time = false;
-		str_slice_t cur_slice = subslice_after(&slice, character_number);
+	READING_SETUP;
+	READING_LOOP {
+		READING_ITER_SETUP;
 		cur_slice = str_slice_trim_left(&cur_slice, is_whitespace);
-		if (cur_slice.len > 0 && *str_slice_at(&cur_slice, 0) == '#') {
+		if (cur_slice.len == 0 || *str_slice_at(&cur_slice, 0) == '#') {
 			break;
 		}
-		character_number = (slice.len - cur_slice.len);
-		base.location.character = character_number;
-		for (size_t i = 0; i < READERS_COUNT; i++) {
-			token_read_result_t read_result = token_readers[i](&cur_slice);
-			if (read_result->kind == READ_NOT_THIS) {
-				read_result_free(read_result);
-				continue;
-			} else if (read_result->kind == READ_NOT_THIS) {
-				read_result_invalid_t *error = read_result_as_invalid(read_result);
-				character_number += error->len;
-				// result_push(result, (message_t)message_error_new(base, error->error));
-				found = true;
-			} else if (read_result->kind == READ_OK) {
+		READING_SETUP_FINISH;
+		base.location.character = i;
+		READERS_LOOP(TOKEN_READERS_COUNT) {
+			READERS_TRY_READ(token_readers) {
 				token_read_result_ok_t *ok = read_result_as_ok(read_result);
 				token_t token = token_read_result_ok_extract(ok);
 				token->location = base.location;
 				arr_push(tokens, &token);
-				character_number += ok->len;
-				// if (ok->has_warning) {
-				// 	result_push(result, (message_t)message_warning_new(base, ok->warning));
-				// }
-				found = true;
 			}
-			read_result_free(read_result);
-			if (found) {
-				break;
-			}
+			READERS_READ_END;
 		}
-		if (!found) {
-			if (!invalid_last_time) {
-				result_push(result, (message_t)message_error_new(base, ERROR_UNKNOWN_TOKEN));
-				invalid_last_time = true;
-			}
-			character_number++;
-		} else {
-			invalid_last_time = false;
-		}
+		READING_ITER_FINISH;
 	}
 }
 

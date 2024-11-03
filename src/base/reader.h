@@ -28,8 +28,35 @@ SEALED_CHILD_DEFINE(read_result, READ_ERR_INVALID, invalid,
 
 SEALED_FREE_DEFINE(read_result);
 
+typedef read_result_t (*reader_t)(slice_t *slice, message_base_t base, result_t *result);
+
 #define READER_TYPE_ALIAS(name, type, free) \
     static inline read_result_ok_t *name##_read_result_ok_new(read_result_base_t base, type *data, size_t len) { return read_result_ok_new(base, free, data, len); } \
     static inline type* name##_read_result_ok_extract(read_result_ok_t *ok) { return (type*)ok->data; } \
     typedef read_result_ok_t name##_read_result_ok_t; \
     typedef read_result_t name##_read_result_t;
+
+#define PUSH_ERROR(err) result_push(result, (message_t)message_error_new(base, err))
+#define INVALID(len) (read_result_t)read_result_invalid_new(read_result_base_new_simple(), len)
+
+// Constructor
+#define READING_SETUP size_t i = 0
+#define READING_SETUP_FINISH i = slice.len - cur_slice.len
+
+#define READING_LOOP while (i < slice.len)
+
+#define READING_ITER_SETUP bool found = false, invalid_last_time = false; str_slice_t cur_slice = subslice_after(&slice, i)
+#define READING_ITER_FINISH if (!found) { if (!invalid_last_time) { PUSH_ERROR(ERROR_UNKNOWN_TOKEN); invalid_last_time = true; } i++; } else { invalid_last_time = false; }
+
+#define READERS_LOOP(count) for (size_t rid = 0; rid < count; rid++)
+#define READERS_TRY_READ(_readers) reader_t *readers = _readers; read_result_t read_result = readers[rid](&cur_slice, base, result); \
+	if (read_result->kind == READ_ERR_INVALID) { \
+		read_result_invalid_t *error = read_result_as_invalid(read_result); \
+		i += error->len; \
+		found = true; \
+	} else if (read_result->kind == READ_OK) { \
+		read_result_ok_t *ok = read_result_as_ok(read_result); \
+		i += ok->len; \
+		found = true; \
+	} if (read_result->kind == READ_OK) 
+#define READERS_READ_END read_result_free(read_result); if (found) break

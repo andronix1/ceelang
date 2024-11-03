@@ -1,6 +1,6 @@
 #include "uint.h"
 
-token_read_result_t uint_reader(str_slice_t *slice) {
+token_read_result_t uint_reader(str_slice_t *slice, message_base_t base, result_t *result) {
     size_t len = 0;
     while (len < slice->len && is_digit(*str_slice_at(slice, len))) len++;
     if (len == 0) {

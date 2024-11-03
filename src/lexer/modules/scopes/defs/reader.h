@@ -10,12 +10,7 @@
 
 READER_TYPE_ALIAS(def, def_t, free);
 
-typedef def_read_result_t (*def_reader_t)(tokens_slice_t *tokens, message_base_t base, result_t *result);
-
 // Reader utils
-
-#define PUSH_ERROR(err) result_push(result, (message_t)message_error_new(base, err))
-#define INVALID(len) (def_read_result_t)read_result_invalid_new(read_result_base_new_simple(), len)
 
 #define EXPECT_TOKEN(token, type) \
     do { \
