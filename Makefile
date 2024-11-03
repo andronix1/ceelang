@@ -5,7 +5,7 @@ OBJS = build/obj/main.o \
        build/obj/core/str.o \
        build/obj/base/messages.o \
        build/obj/base/result.o \
-       build/obj/tokenizer/readers/reader.o \
+       build/obj/base/reader.o \
        build/obj/tokenizer/readers/uint.o \
        build/obj/tokenizer/readers/ident.o \
        build/obj/tokenizer/tokens.o \
@@ -18,6 +18,7 @@ OBJS = build/obj/main.o \
        build/obj/lexer/modules/scopes/defs/parse.o \
        build/obj/lexer/modules/scopes/defs/reader.o \
        build/obj/lexer/modules/scopes/defs/contents/content.o \
+       build/obj/lexer/modules/scopes/defs/contents/func/parse.o \
        build/obj/lexer/modules/scopes/defs/contents/func/args.o \
        build/obj/lexer/modules/scopes/defs/contents/func/stats/stat.o \
        build/obj/lexer/task.o

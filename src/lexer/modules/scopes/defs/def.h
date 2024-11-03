@@ -9,4 +9,6 @@ typedef struct {
 	def_content_t content;
 } def_t;
 
+void def_free(def_t *def);
+
 ARR_TYPED_ALIAS_DEFINE(defs, def_t);

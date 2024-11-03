@@ -45,3 +45,13 @@ SEALED_CHILD_DEFINE_FREE(token, TOKEN_STR, str,
 SEALED_FREE_DEFINE(token);
 
 ARR_TYPED_ALIAS_DEFINE(tokens, token_t);
+
+typedef enum {
+    TOKEN_GET_SCOPE_OK = 0,
+    TOKEN_GET_SCOPE_NOT_STARTED,
+    TOKEN_GET_SCOPE_NOT_CLOSED,
+} token_get_scope_err_t;
+
+token_get_scope_err_t token_try_get_scope(tokens_slice_t *slice, tokens_slice_t *dst, token_type_t opening, token_type_t closing);
+#define token_get_circle_scope(slice, dst) token_try_get_scope(slice, dst, TOKEN_OPENING_CIRCLE_BRACE, TOKEN_CLOSING_CIRCLE_BRACE);
+#define token_get_figure_scope(slice, dst) token_try_get_scope(slice, dst, TOKEN_OPENING_FIGURE_BRACE, TOKEN_CLOSING_FIGURE_BRACE);

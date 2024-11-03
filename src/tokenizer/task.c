@@ -40,8 +40,7 @@ task_err_t tokens_task(int argc, char **argv) {
 
 	result_t result = result_new();
 	tokens_t tokens = tokens_new_with_cap(1);
-	str_slice_t file_path_slice = str_slice_from_cstr(file_path);
-	message_base_t message_base = message_base_new_simple(str_copy_from_slice(&file_path_slice), location_new(0, 0));
+	message_base_t message_base = message_base_new_simple(str_slice_from_cstr(file_path), location_new(0, 0));
 	tokenize(file, message_base, &result, &tokens);
 	fclose(file);
 
@@ -59,7 +58,6 @@ task_err_t tokens_task(int argc, char **argv) {
 		printf("Tokenizing failed!\n");
 	}
 
-	message_free_base(&message_base);
 	result_free(&result);
 	arr_free(&tokens);
 

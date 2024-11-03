@@ -11,10 +11,9 @@ SEALED_KIND(message,
 );
 
 SEALED_BASE(message,
-    (str_t, file),
+    (str_slice_t, file),
     (location_t, location)
 );
-SEALED_BASE_DEFINE_FREE(message);
 
 typedef enum {
     warning_variants_count
@@ -28,7 +27,7 @@ typedef enum {
     ERROR_UNKNOWN_TOKEN,
     ERROR_MISSING_TOKEN,
     ERROR_INVALID_TOKEN,
-    ERROR_NOT_IMPLEMENTED,
+    ERROR_SCOPE_NOT_CLOSED,
     error_variants_count
 } error_type_t;
 

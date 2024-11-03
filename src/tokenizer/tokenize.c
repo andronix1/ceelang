@@ -74,26 +74,26 @@ void tokenize_line(str_slice_t slice, message_base_t base, result_t *result, tok
 		base.location.character = character_number;
 		for (size_t i = 0; i < READERS_COUNT; i++) {
 			token_read_result_t read_result = token_readers[i](&cur_slice);
-			SEALED_ASSERT_ALL_USED(token_read_result, 3);
-			if (read_result->kind == TOKEN_READ_NOT_THIS) {
-				token_read_result_free(read_result);
+			if (read_result->kind == READ_NOT_THIS) {
+				read_result_free(read_result);
 				continue;
-			} else if (read_result->kind == TOKEN_READ_NOT_THIS) {
-				token_read_result_invalid_t *error = token_read_result_as_invalid(read_result);
+			} else if (read_result->kind == READ_NOT_THIS) {
+				read_result_invalid_t *error = read_result_as_invalid(read_result);
 				character_number += error->len;
-				result_push(result, (message_t)message_error_new(base, error->error));
+				// result_push(result, (message_t)message_error_new(base, error->error));
 				found = true;
-			} else if (read_result->kind == TOKEN_READ_OK) {
-				token_read_result_ok_t *ok = token_read_result_as_ok(read_result);
-				ok->token->location = base.location;
-				arr_push(tokens, &ok->token);
+			} else if (read_result->kind == READ_OK) {
+				token_read_result_ok_t *ok = read_result_as_ok(read_result);
+				token_t token = token_read_result_ok_extract(ok);
+				token->location = base.location;
+				arr_push(tokens, &token);
 				character_number += ok->len;
-				if (ok->has_warning) {
-					result_push(result, (message_t)message_warning_new(base, ok->warning));
-				}
+				// if (ok->has_warning) {
+				// 	result_push(result, (message_t)message_warning_new(base, ok->warning));
+				// }
 				found = true;
 			}
-			token_read_result_free(read_result);
+			read_result_free(read_result);
 			if (found) {
 				break;
 			}

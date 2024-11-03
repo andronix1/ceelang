@@ -12,10 +12,8 @@
             slice->len <= keyword.len ||   \
             !is_ident(*str_slice_at(slice, keyword.len))  \
         )) ? (token_read_result_t)token_read_result_ok_new(  \
-            token_read_result_base_new_simple(),  \
+            read_result_base_new_simple(),  \
             token_base_new(keyword_token_type, location_new(0, 0)),  \
-            keyword.len,  \
-            false,  \
-            warning_variants_count  \
-        ) : (token_read_result_t)token_read_result_base_new(TOKEN_READ_NOT_THIS);  \
+            keyword.len  \
+        ) : (token_read_result_t)read_result_base_new(READ_NOT_THIS);  \
     }

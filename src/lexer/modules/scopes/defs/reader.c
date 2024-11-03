@@ -1,8 +1,7 @@
 #include "reader.h"
 
-SEALED_CHILD_IMPL_FREE(def_read_result, ok, { });
-SEALED_CHILD_IMPL(def_read_result, invalid);
-
-SEALED_FREE_IMPL(def_read_result, {
-    SEALED_SHOULD_BE_FREED(def_read_result, DEF_READ_OK, ok)
-}, 3);
+token_t token_next(size_t *len, tokens_slice_t *tokens, message_base_t *base) {
+    token_t token = *tokens_slice_at(tokens, (*len)++);
+    base->location = token->location;
+    return token;
+}

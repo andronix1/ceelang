@@ -4,16 +4,14 @@
 
 token_read_result_t ident_reader(str_slice_t *slice) {
     if (slice->len == 0 || !is_start_ident(*str_slice_at(slice, 0))) {
-        return (token_read_result_t)token_read_result_base_new(TOKEN_READ_NOT_THIS);
+        return (token_read_result_t)read_result_base_new(READ_NOT_THIS);
     }
     size_t len = 0;
     while (len < slice->len && is_ident(*str_slice_at(slice, len))) len++;
     str_slice_t ident_slice = subslice_before(slice, len);
     return (token_read_result_t)token_read_result_ok_new(
-        token_read_result_base_new_simple(),
+        read_result_base_new_simple(),
         (token_t)token_ident_new(token_base_new_simple(location_new(0, 0)), str_copy_from_slice(&ident_slice)),
-        len,
-        false,
-        warning_variants_count
+        len
     );
 }

@@ -37,11 +37,10 @@ task_err_t ast_task(int argc, char **argv) {
 		printf("ERROR: missing file path\n");
 		return TASK_ERR_INVALID_USAGE;
 	}
-	str_slice_t file_path_slice = str_slice_from_cstr(file_path);
 
 	result_t result = result_new();
 	scope_t scope;
-	message_base_t base = message_base_new_simple(str_copy_from_slice(&file_path_slice), location_new(0, 0));
+	message_base_t base = message_base_new_simple(str_slice_from_cstr(file_path), location_new(0, 0));
 	scope_load(file_path, base, &result, &scope);
 
 	result_print(&result);
@@ -58,7 +57,6 @@ task_err_t ast_task(int argc, char **argv) {
 	}
 
 	scope_free(&scope);
-	message_free_base(&base);
 	result_free(&result);
 
 	return TASK_OK;
