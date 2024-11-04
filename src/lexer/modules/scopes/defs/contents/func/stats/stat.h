@@ -1,6 +1,7 @@
 #pragma once
 
 #include "lexer/modules/scopes/exprs/expr.h"
+#include "lexer/modules/scopes/defs/contents/definition/definition.h"
 #include "core/arr.h"
 #include "core/sealed.h"
 
@@ -15,16 +16,9 @@ SEALED_BASE(stat);
 
 ARR_TYPED_ALIAS_DEFINE(stats, stat_t);
 
-typedef enum {
-    STAT_DEFINE_CONST,
-    STAT_DEFINE_VAR,
-} stat_define_type_t;
-
 SEALED_CHILD_DEFINE_FREE(stat, STAT_DEFINE, define,
-    (stat_define_type_t, define_type),
-    (str_t, name),
-    (str_t, type),
-    (expr_t, expr)
+    (definition_t*, definition),
+    (str_t, name)
 );
 
 SEALED_CHILD_DEFINE_FREE(stat, STAT_FUNCALL, funcall,

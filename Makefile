@@ -30,6 +30,9 @@ OBJS = build/obj/main.o \
        build/obj/lexer/modules/scopes/defs/def.o \
        build/obj/lexer/modules/scopes/defs/parse.o \
        build/obj/lexer/modules/scopes/defs/contents/content.o \
+       build/obj/lexer/modules/scopes/defs/contents/definition/parse.o \
+       build/obj/lexer/modules/scopes/defs/contents/definition/definition.o \
+       build/obj/lexer/modules/scopes/defs/contents/define/parse.o \
        build/obj/lexer/modules/scopes/defs/contents/func/parse.o \
        build/obj/lexer/modules/scopes/defs/contents/func/args.o \
        build/obj/lexer/modules/scopes/defs/contents/func/stats/stat.o \

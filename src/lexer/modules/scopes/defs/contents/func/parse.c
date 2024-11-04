@@ -1,6 +1,6 @@
 #include "parse.h"
 
-def_read_result_t fun_parse(tokens_slice_t *tokens, message_base_t base, result_t *result) {
+def_read_result_t def_fun_parse(tokens_slice_t *tokens, message_base_t base, result_t *result) {
     READER_SETUP;
     EXPECT_TOKENS_COUNT_OR_NOT_THIS(1);
     token_t def_token = NEXT_TOKEN();

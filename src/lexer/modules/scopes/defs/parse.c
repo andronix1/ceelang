@@ -1,7 +1,8 @@
 #include "parse.h"
 
 reader_t def_readers[] = {
-    fun_parse
+    def_fun_parse,
+    def_define_parse,
 };
 #define DEF_READERS_COUNT (sizeof(def_readers) / sizeof(def_readers[0]))
 

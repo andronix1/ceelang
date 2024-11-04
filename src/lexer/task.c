@@ -63,6 +63,26 @@ void print_expr(expr_t expr) {
 	}
 }
 
+void print_definition(definition_t *definition, str_t *name) {
+	switch (definition->kind) {
+		case DEFINITION_CONST:
+			printf("const");
+			break;
+		case DEFINITION_VAR:
+			printf("var");
+			break;
+	}
+	printf(" ");
+	str_slice_dump(&name->slice, stdout);
+	printf(": ");
+	str_slice_dump(&definition->type.slice, stdout);
+	if (definition->expr) {
+		printf(" = ");
+		print_expr(definition->expr);
+	}
+	printf(";");
+}
+
 void print_stats(stats_slice_t *stats);
 
 void print_stat(stat_t stat) {
@@ -86,23 +106,7 @@ void print_stat(stat_t stat) {
 		}
 		case STAT_DEFINE: {
 			stat_define_t *stat_define = stat_as_define(stat);
-			switch (stat_define->define_type) {
-				case STAT_DEFINE_CONST:
-					printf("const");
-					break;
-				case STAT_DEFINE_VAR:
-					printf("var");
-					break;
-			}
-			printf(" ");
-			str_slice_dump(&stat_define->name.slice, stdout);
-			printf(": ");
-			str_slice_dump(&stat_define->type.slice, stdout);
-			if (stat_define->expr) {
-				printf(" = ");
-				print_expr(stat_define->expr);
-			}
-			printf(";");
+			print_definition(stat_define->definition, &stat_define->name);
 			break;
 		}
 		case STAT_IF: {
@@ -142,7 +146,7 @@ void print_stats(stats_slice_t *stats) {
 }
 
 void print_def(def_t def) {
-	SEALED_ASSERT_ALL_USED(def_content, 1);
+	SEALED_ASSERT_ALL_USED(def_content, 2);
 	switch (def.content->kind) {
 		case DEF_CONTENT_FUNC: {
 			def_content_func_t *func = def_content_as_func(def.content);
@@ -168,9 +172,11 @@ void print_def(def_t def) {
 			printf(" }");
 			break;
 		}
-		// case DEF_CONTENT_CONST:
-		// 	printf("const");
-		// 	break;
+		case DEF_CONTENT_DEFINE: {
+			def_content_define_t *define = def_content_as_define(def.content);
+			print_definition(define->definition, &def.name);
+			break;
+		}
 	}
 }
 

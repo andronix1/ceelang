@@ -9,6 +9,12 @@ SEALED_CHILD_IMPL_FREE(def_content, func, {
 	arr_free(&self->args);
 });
 
+SEALED_CHILD_IMPL_FREE(def_content, define, {
+	definition_free(self->definition);
+	free(self->definition);
+});
+
 SEALED_FREE_IMPL(def_content, {
 	SEALED_SHOULD_BE_FREED(def_content, DEF_CONTENT_FUNC, func)
-}, 1);
+	SEALED_SHOULD_BE_FREED(def_content, DEF_CONTENT_DEFINE, define)
+}, 2);

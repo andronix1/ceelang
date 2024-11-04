@@ -1,11 +1,9 @@
 #include "stat.h"
 
 SEALED_CHILD_IMPL_FREE(stat, define, {
-    str_free(&self->name);
-    str_free(&self->type);
-    if (self->expr) {
-        expr_free(self->expr);
-    }
+	str_free(&self->name);
+    definition_free(self->definition);
+    free(self->definition);
 });
 SEALED_CHILD_IMPL_FREE(stat, funcall, {
     funcall_free(self->funcall);

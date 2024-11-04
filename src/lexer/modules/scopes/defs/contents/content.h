@@ -6,11 +6,15 @@
 #include "func/stats/stat.h"
 
 SEALED_KIND(def_content,
-	DEF_CONTENT_FUNC
-	// DEF_CONTENT_CONST
+	DEF_CONTENT_FUNC,
+	DEF_CONTENT_DEFINE
 );
 
 SEALED_BASE(def_content);
+
+SEALED_CHILD_DEFINE_FREE(def_content, DEF_CONTENT_DEFINE, define, 
+	(definition_t*, definition)
+);
 
 SEALED_CHILD_DEFINE_FREE(def_content, DEF_CONTENT_FUNC, func,
 	(str_t*, return_type),
