@@ -3,6 +3,7 @@
 
 #include "tokenizer/task.h"
 #include "lexer/task.h"
+#include "type_checker/task.h"
 #include "tasks.h"
 
 task_t tasks[] = {
@@ -17,6 +18,12 @@ task_t tasks[] = {
 		.description = "show file ast",
 		.args = "<file>",
 		.func = ast_task
+	},
+	{
+		.name = "types",
+		.description = "check types in file",
+		.args = "<file>",
+		.func = type_checker_task
 	}
 };
 #define TASKS_LEN sizeof(tasks) / sizeof(tasks[0])

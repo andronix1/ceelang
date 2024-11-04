@@ -1,7 +1,7 @@
 #include "task.h"
 
-task_err_t ast_task(int argc, char **argv) {
-	char *file_path = next_arg(&argc, &argv);
+task_err_t type_checker_task(int argc, char **argv) {
+    char *file_path = next_arg(&argc, &argv);
 	if (!file_path) {
 		printf("ERROR: missing file path\n");
 		return TASK_ERR_INVALID_USAGE;
@@ -13,12 +13,12 @@ task_err_t ast_task(int argc, char **argv) {
 	scope_load(file_path, base, &result, &scope);
 
 	result_print(&result);
-	print_scope(&scope);
+    printf("NOT IMPLEMENTED YET!\n");
 
 	if (result.success) {
-		printf("AST building finished!\n");
+		printf("Type checking finished!\n");
 	} else {
-		printf("AST building failed!\n");
+		printf("Type checking failed!\n");
 	}
 
 	scope_free(&scope);
