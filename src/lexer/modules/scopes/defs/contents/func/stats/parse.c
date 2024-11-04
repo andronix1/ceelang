@@ -1,6 +1,7 @@
 #include "parse.h"
 
 reader_t stat_readers[] = {
+	stat_define_parse,
 	stat_funcall_parse,
 	stat_return_parse
 };

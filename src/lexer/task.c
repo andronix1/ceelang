@@ -80,6 +80,26 @@ void print_stat(stat_t stat) {
 			print_funcall(stat_funcall->funcall);
 			break;
 		}
+		case STAT_DEFINE: {
+			stat_define_t *stat_define = stat_as_define(stat);
+			switch (stat_define->define_type) {
+				case STAT_DEFINE_CONST:
+					printf("const");
+					break;
+				case STAT_DEFINE_VAR:
+					printf("var");
+					break;
+			}
+			printf(" ");
+			str_slice_dump(&stat_define->name.slice, stdout);
+			printf(": ");
+			str_slice_dump(&stat_define->type.slice, stdout);
+			if (stat_define->expr) {
+				printf(" = ");
+				print_expr(stat_define->expr);
+			}
+			break;
+		}
 		default:
 			printf("???");
 			break;
@@ -135,8 +155,9 @@ task_err_t ast_task(int argc, char **argv) {
 	message_base_t base = message_base_new_simple(str_slice_from_cstr(file_path), location_new(0, 0));
 	scope_load(file_path, base, &result, &scope);
 
+	printf("-------------\n");
 	result_print(&result);
-	printf("ast built:\n");
+	printf("-------------\n");
 	SLICE_FOREACH(&scope.defs.slice, def_t, def, {
 		print_def(*def);
 		printf("\n");

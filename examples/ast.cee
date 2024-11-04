@@ -1,15 +1,17 @@
 fun to_percents(v: i32, a: i32, b: i32): i32 {
-    if a - b {
-        return 16;
+    if b <= a {
+        return NaN;
     }
-    if a == b {
-        return 11;
-    } else {
-        return 12
+    if v < a {
+        return 0;
+    } elif v > b {
+        return 100;
     }
+    return (v - a) * 100 / (b - a);
 }
 
 fun main() {
+    var test: i32;
     const a: i32 = 1;
     const b: i32 = 2;
     println(to_percents(3, 0, 10));

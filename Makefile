@@ -36,6 +36,7 @@ OBJS = build/obj/main.o \
        build/obj/lexer/modules/scopes/defs/contents/func/stats/parse.o \
        build/obj/lexer/modules/scopes/defs/contents/func/stats/readers/return.o \
        build/obj/lexer/modules/scopes/defs/contents/func/stats/readers/funcall.o \
+       build/obj/lexer/modules/scopes/defs/contents/func/stats/readers/define.o \
        build/obj/lexer/task.o
 
 link: build-obj

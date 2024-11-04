@@ -5,6 +5,7 @@
 #include "lexer/modules/scopes/defs/reader.h"
 #include "readers/reader.h"
 #include "readers/return.h"
+#include "readers/define.h"
 #include "readers/funcall.h"
 
 

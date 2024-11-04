@@ -20,7 +20,7 @@ typedef enum {
     STAT_DEFINE_VAR,
 } stat_define_type_t;
 
-SEALED_CHILD_DEFINE(stat, STAT_DEFINE, define,
+SEALED_CHILD_DEFINE_FREE(stat, STAT_DEFINE, define,
     (stat_define_type_t, define_type),
     (str_t, name),
     (str_t, type),

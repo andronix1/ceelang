@@ -23,9 +23,9 @@
         } \
     } while (0)
 
-#define EXPECT_TOKENS_COUNT(count) \
+#define EXPECT_MORE_TOKENS(count) \
     do { \
-        if (tokens->len < (count)) { \
+        if (tokens->len < len + (count)) { \
             PUSH_ERROR(ERROR_MISSING_TOKEN); \
             return INVALID(tokens->len); \
         } \

@@ -7,7 +7,7 @@ def_read_result_t fun_parse(tokens_slice_t *tokens, message_base_t base, result_
     EXPECT_TOKEN_OR_NOT_THIS(def_token, TOKEN_FUN);
 
     // fun <IDENT> (
-    EXPECT_TOKENS_COUNT(4);
+    EXPECT_MORE_TOKENS(3);
     token_t fun_name_token = NEXT_TOKEN();
     EXPECT_TOKEN(fun_name_token, TOKEN_IDENT);
     EXPECT_TOKEN(NEXT_TOKEN(), TOKEN_OPENING_CIRCLE_BRACE);
@@ -39,10 +39,10 @@ def_read_result_t fun_parse(tokens_slice_t *tokens, message_base_t base, result_
 
     // : <TYPE> {
     str_t *return_type = NULL;
-    EXPECT_TOKENS_COUNT(len + 1);
+    EXPECT_MORE_TOKENS(1);
     token_t body_opening_token = NEXT_TOKEN();
     if (body_opening_token->kind == TOKEN_COLON) {
-        EXPECT_TOKENS_COUNT(len + 2);
+        EXPECT_MORE_TOKENS(2);
         token_t return_type_token = NEXT_TOKEN();
         EXPECT_TOKEN(return_type_token, TOKEN_IDENT);
         return_type = malloc(sizeof(str_t));
