@@ -139,8 +139,9 @@ task_err_t ast_task(int argc, char **argv) {
 	printf("ast built:\n");
 	SLICE_FOREACH(&scope.defs.slice, def_t, def, {
 		print_def(*def);
+		printf("\n");
 	});
-	printf("\n-------------\n");
+	printf("-------------\n");
 
 	if (result.success) {
 		printf("AST building finished!\n");
