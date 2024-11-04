@@ -83,9 +83,12 @@ void print_definition(definition_t *definition, str_t *name) {
 	printf(";");
 }
 
-void print_stats(stats_slice_t *stats);
+#define TAB() for (size_t j = 0; j < level; j++) { printf("    "); }
 
-void print_stat(stat_t stat) {
+void print_stats(stats_slice_t *stats, size_t level);
+
+void print_stat(stat_t stat, size_t level) {
+	TAB();
 	SEALED_ASSERT_ALL_USED(stat, 4);
 	switch (stat->kind) {
 		case STAT_RETURN: {
@@ -113,20 +116,23 @@ void print_stat(stat_t stat) {
 			stat_if_t *stat_if = stat_as_if(stat);
 			printf("if ");
 			print_expr(stat_if->if_cond_stat.cond);
-			printf(" { ");
-			print_stats(&stat_if->if_cond_stat.stats.slice);
-			printf(" }");
+			printf(" {\n");
+			print_stats(&stat_if->if_cond_stat.stats.slice, level + 1);
+			TAB();
+			printf("}");
 			SLICE_FOREACH(&stat_if->elifs.slice, if_cond_stat_t, stat, {
 				printf(" elif ");
 				print_expr(stat->cond);
-				printf(" { ");
-				print_stats(&stat->stats.slice);
-				printf(" }");
+				printf(" {\n");
+				print_stats(&stat->stats.slice, level + 1);
+				TAB();
+				printf("}");
 			});
 			if (stat_if->else_stats) {
-				printf(" else { ");
-				print_stats(&stat_if->else_stats->slice);
-				printf(" }");
+				printf(" else {\n");
+				print_stats(&stat_if->else_stats->slice, level + 1);
+				TAB();
+				printf("}");
 			}
 			break;
 		}
@@ -136,12 +142,10 @@ void print_stat(stat_t stat) {
 	}
 }
 
-void print_stats(stats_slice_t *stats) {
+void print_stats(stats_slice_t *stats, size_t level) {
 	SLICE_FOREACH(stats, stat_t, stat, {
-		if (i != 0) {
-			printf(" ");
-		}
-		print_stat(*stat);
+		print_stat(*stat, level);
+		printf("\n");
 	});
 }
 
@@ -150,7 +154,7 @@ void print_def(def_t def) {
 	switch (def.content->kind) {
 		case DEF_CONTENT_FUNC: {
 			def_content_func_t *func = def_content_as_func(def.content);
-			printf("func ");
+			printf("fun ");
 			str_slice_dump(&def.name.slice, stdout);
 			printf("(");
 			for (size_t i = 0; i < func->args.slice.len; i++) {
@@ -167,9 +171,9 @@ void print_def(def_t def) {
 				printf(": ");
 				str_slice_dump(&func->return_type->slice, stdout);
 			}
-			printf(" { ");
-			print_stats(&func->stats.slice);
-			printf(" }");
+			printf(" {\n");
+			print_stats(&func->stats.slice, 1);
+			printf("}");
 			break;
 		}
 		case DEF_CONTENT_DEFINE: {
@@ -197,7 +201,7 @@ task_err_t ast_task(int argc, char **argv) {
 	printf("-------------\n");
 	SLICE_FOREACH(&scope.defs.slice, def_t, def, {
 		print_def(*def);
-		printf("\n");
+		printf("\n\n");
 	});
 	printf("-------------\n");
 
