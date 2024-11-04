@@ -29,11 +29,12 @@ definition_read_result_t definition_parse(tokens_slice_t *tokens, message_base_t
     if (next_token->kind == TOKEN_SET) {
         tokens_slice_t assign_expr = subslice_after(tokens, len);
         assign_expr = tokens_before_circle_scoped(&assign_expr, TOKEN_SEMICOLON);
-        len += assign_expr.len + 1;
-        expr_parse(assign_expr, base, result, &definition->expr);
-    } else if (next_token->kind != TOKEN_SEMICOLON) {
-        return INVALID(ERROR_INVALID_TOKEN);
+        len += expr_parse(assign_expr, base, result, &definition->expr);
+    } else {
+        len--;
     }
+
+    EXPECT_NEXT_TOKEN_OR_ERROR(TOKEN_SEMICOLON);
 
     *name = str_clone(&name_ident_token->ident);
     definition->type = str_clone(&type_ident_token->ident);

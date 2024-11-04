@@ -1,7 +1,5 @@
 #include "parse.h"
 
-void expr_parse(tokens_slice_t slice, message_base_t base, result_t *result, expr_t *expr);
-
 funcall_read_result_t funcall_reader(tokens_slice_t *tokens, message_base_t base, result_t *result) {
     READER_SETUP;
     EXPECT_TOKENS_COUNT_OR_NOT_THIS(2);

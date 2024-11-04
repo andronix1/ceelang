@@ -16,6 +16,14 @@
         } \
     } while (0)
 
+#define EXPECT_NEXT_TOKEN_OR_ERROR(type) \
+    do { \
+        if ((NEXT_TOKEN())->kind != type) { \
+            PUSH_ERROR(ERROR_INVALID_TOKEN); \
+            len--; \
+        } \
+    } while (0)
+
 #define EXPECT_TOKEN_OR_NOT_THIS(token, type) \
     do { \
         if ((token)->kind != type) { \

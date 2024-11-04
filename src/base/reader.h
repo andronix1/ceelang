@@ -63,5 +63,5 @@ typedef read_result_t (*reader_t)(slice_t *slice, message_base_t base, result_t 
 		read_result_ok_t *ok = read_result_as_ok(read_result); \
 		i += ok->len; \
 		found = true; \
-	} if (read_result->kind == READ_OK) 
+	} if (read_result->kind == READ_OK)
 #define READERS_READ_END read_result_free(read_result); if (found) break

@@ -10,7 +10,7 @@ reader_t raw_expr_readers[] = {
 };
 #define RAW_EXPR_READERS_COUNT (sizeof(raw_expr_readers) / sizeof(raw_expr_readers[0]))
 
-void raw_expr_parse(tokens_slice_t slice, message_base_t base, result_t *result, raw_expr_t *raw_expr) {
+size_t raw_expr_parse(tokens_slice_t slice, message_base_t base, result_t *result, raw_expr_t *raw_expr) {
 	READING_SETUP;
 	READING_LOOP {
 		READING_ITER_SETUP;
@@ -26,7 +26,7 @@ void raw_expr_parse(tokens_slice_t slice, message_base_t base, result_t *result,
 		}
 		READING_ITER_FINISH(ERROR_INVALID_TOKEN);
         READER_CHANGE_POS_ON_NOT_FOUND {
-			i = slice.len;
+            return i;
         }
 	}
 }
@@ -103,9 +103,10 @@ bool try_raw_expr_to_expr(raw_expr_t *raw_expr, message_base_t base, result_t *r
     return true;
 }
 
-void expr_parse(tokens_slice_t slice, message_base_t base, result_t *result, expr_t *expr) {
+size_t expr_parse(tokens_slice_t slice, message_base_t base, result_t *result, expr_t *expr) {
     raw_expr_t raw_expr = raw_expr_new_with_cap(1);
-    raw_expr_parse(slice, base, result, &raw_expr);
+    size_t len = raw_expr_parse(slice, base, result, &raw_expr);
     try_raw_expr_to_expr(&raw_expr, base, result, expr);
     arr_free(&raw_expr);
+    return len;
 }
