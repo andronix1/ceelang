@@ -28,7 +28,7 @@ SEALED_CHILD_DEFINE(stat, STAT_DEFINE, define,
 );
 
 SEALED_CHILD_DEFINE_FREE(stat, STAT_FUNCALL, funcall,
-    (funcall_t, funcall)
+    (funcall_t*, funcall)
 );
 
 SEALED_CHILD_DEFINE_FREE(stat, STAT_RETURN, return,

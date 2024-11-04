@@ -52,14 +52,7 @@ def_read_result_t fun_parse(tokens_slice_t *tokens, message_base_t base, result_
     tokens_slice_t scope_start = subslice_after(tokens, len - 1);
     tokens_slice_t scope;
     token_get_scope_err_t err = token_get_figure_scope(&scope_start, &scope);
-    if (err) {
-        if (err == TOKEN_GET_SCOPE_NOT_CLOSED) {
-            PUSH_ERROR(ERROR_SCOPE_NOT_CLOSED);
-        } else if (err == TOKEN_GET_SCOPE_NOT_STARTED) { 
-            PUSH_ERROR(ERROR_MISSING_TOKEN);
-        }
-        return INVALID(tokens->len);
-    }
+    EXPECT_SCOPE_OR_NOT_THIS(err);
 
     len += scope.len + 1;
 

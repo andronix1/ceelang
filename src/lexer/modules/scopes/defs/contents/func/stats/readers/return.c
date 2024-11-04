@@ -1,6 +1,6 @@
 #include "return.h"
 
-stat_read_result_t return_parse(tokens_slice_t *tokens, message_base_t base, result_t *result) {
+stat_read_result_t stat_return_parse(tokens_slice_t *tokens, message_base_t base, result_t *result) {
     READER_SETUP;
     EXPECT_TOKEN_OR_NOT_THIS(NEXT_TOKEN(), TOKEN_RETURN);
     expr_t expr = NULL;

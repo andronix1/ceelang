@@ -16,6 +16,8 @@ OBJS = build/obj/main.o \
        build/obj/lexer/modules/module.o \
        build/obj/lexer/modules/scopes/load.o \
        build/obj/lexer/modules/scopes/scope.o \
+       build/obj/lexer/modules/scopes/funcall/funcall.o \
+       build/obj/lexer/modules/scopes/funcall/parse.o \
        build/obj/lexer/modules/scopes/exprs/expr.o \
        build/obj/lexer/modules/scopes/exprs/raw_expr.o \
        build/obj/lexer/modules/scopes/exprs/parse.o \
@@ -33,6 +35,7 @@ OBJS = build/obj/main.o \
        build/obj/lexer/modules/scopes/defs/contents/func/stats/stat.o \
        build/obj/lexer/modules/scopes/defs/contents/func/stats/parse.o \
        build/obj/lexer/modules/scopes/defs/contents/func/stats/readers/return.o \
+       build/obj/lexer/modules/scopes/defs/contents/func/stats/readers/funcall.o \
        build/obj/lexer/task.o
 
 link: build-obj

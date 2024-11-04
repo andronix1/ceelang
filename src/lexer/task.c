@@ -54,7 +54,7 @@ void print_expr(expr_t expr) {
 		}
 		case EXPR_FUNCALL: {
 			expr_funcall_t *expr_funcall = expr_as_funcall(expr);
-			print_funcall(&expr_funcall->funcall);
+			print_funcall(expr_funcall->funcall);
 			break;
 		}
 		default:
@@ -73,6 +73,11 @@ void print_stat(stat_t stat) {
 				printf(" ");
 				print_expr(stat_return->expr);
 			}
+			break;
+		}
+		case STAT_FUNCALL: {
+			stat_funcall_t *stat_funcall = stat_as_funcall(stat);
+			print_funcall(stat_funcall->funcall);
 			break;
 		}
 		default:

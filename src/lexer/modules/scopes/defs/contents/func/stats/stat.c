@@ -2,7 +2,8 @@
 
 SEALED_CHILD_IMPL(stat, define);
 SEALED_CHILD_IMPL_FREE(stat, funcall, {
-    funcall_free(&self->funcall);
+    funcall_free(self->funcall);
+    free(self->funcall);
 });
 SEALED_CHILD_IMPL_FREE(stat, return, {
     if (self->expr) {

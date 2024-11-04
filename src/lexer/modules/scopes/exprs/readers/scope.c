@@ -8,14 +8,7 @@ raw_expr_read_result_t raw_expr_scope_reader(tokens_slice_t *tokens, message_bas
     EXPECT_TOKEN_OR_NOT_THIS(NEXT_TOKEN(), TOKEN_OPENING_CIRCLE_BRACE);
     tokens_slice_t scope;
     token_get_scope_err_t err = token_get_circle_scope(tokens, &scope);
-    if (err) {
-        if (err == TOKEN_GET_SCOPE_NOT_STARTED) {
-            return NOT_THIS();
-        } else if (err == TOKEN_GET_SCOPE_NOT_CLOSED) {
-            PUSH_ERROR(ERROR_SCOPE_NOT_CLOSED);
-            return INVALID(tokens->len);
-        }
-    }
+    EXPECT_SCOPE_OR_NOT_THIS(err);
     raw_expr_t expr = raw_expr_new_with_cap(1);
     raw_expr_parse(scope, base, result, &expr);
     return (raw_expr_read_result_t)raw_expr_read_result_ok_new(

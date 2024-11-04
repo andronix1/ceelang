@@ -2,16 +2,8 @@
 
 #include "core/str.h"
 #include "core/sealed.h"
-
-SEALED_KIND(expr,
-    EXPR_IDENT,
-    EXPR_CONST,
-    EXPR_FUNCALL,
-    EXPR_BINOP
-);
-
-SEALED_BASE(expr);
-SEALED_FREE_DEFINE(expr);
+#include "../funcall/funcall.h"
+#include "expr_base.h"
 
 // binop
 
@@ -39,17 +31,8 @@ SEALED_CHILD_DEFINE_FREE(expr, EXPR_IDENT, ident,
 
 // funcall
 
-ARR_TYPED_ALIAS_DEFINE(funcall_args, expr_t);
-
-typedef struct {
-    str_t ident;
-    funcall_args_t args;
-} funcall_t;
-
-void funcall_free(funcall_t *funcall);
-
 SEALED_CHILD_DEFINE_FREE(expr, EXPR_FUNCALL, funcall,
-    (funcall_t, funcall)
+    (funcall_t*, funcall)
 );
 
 // const

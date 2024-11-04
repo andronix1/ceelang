@@ -1,7 +1,8 @@
 #include "parse.h"
 
 reader_t stat_readers[] = {
-	return_parse
+	stat_funcall_parse,
+	stat_return_parse
 };
 #define STAT_READERS_COUNT (sizeof(stat_readers) / sizeof(stat_readers[0]))
 
