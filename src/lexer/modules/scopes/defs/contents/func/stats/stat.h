@@ -35,9 +35,18 @@ SEALED_CHILD_DEFINE_FREE(stat, STAT_RETURN, return,
     (expr_t, expr)
 );
 
-SEALED_CHILD_DEFINE(stat, STAT_IF, if,
-    (expr_t, cond),
-    (stats_t, if_stats),
+typedef struct {
+    expr_t cond;
+    stats_t stats;
+} if_cond_stat_t;
+
+void if_cond_stat_free(if_cond_stat_t *stat);
+
+ARR_TYPED_ALIAS_DEFINE(elif_cond_stats, if_cond_stat_t);
+
+SEALED_CHILD_DEFINE_FREE(stat, STAT_IF, if,
+    (if_cond_stat_t, if_cond_stat),
+    (elif_cond_stats_t, elifs),
     (stats_t*, else_stats)
 );
 

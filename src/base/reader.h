@@ -40,6 +40,7 @@ typedef read_result_t (*reader_t)(slice_t *slice, message_base_t base, result_t 
 #define NOT_THIS() read_result_base_new(READ_NOT_THIS)
 #define INVALID(len) (read_result_t)read_result_invalid_new(read_result_base_new_simple(), len)
 
+#define EXPECT_SCOPE(err) do { if (err) { if (err == TOKEN_GET_SCOPE_NOT_STARTED) { return INVALID(ERROR_INVALID_TOKEN); } else if (err == TOKEN_GET_SCOPE_NOT_CLOSED) { PUSH_ERROR(ERROR_SCOPE_NOT_CLOSED); return INVALID(tokens->len); } } } while(0)
 #define EXPECT_SCOPE_OR_NOT_THIS(err) do { if (err) { if (err == TOKEN_GET_SCOPE_NOT_STARTED) { return NOT_THIS(); } else if (err == TOKEN_GET_SCOPE_NOT_CLOSED) { PUSH_ERROR(ERROR_SCOPE_NOT_CLOSED); return INVALID(tokens->len); } } } while(0)
 
 // Constructor

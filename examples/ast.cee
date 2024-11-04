@@ -14,6 +14,10 @@ fun main() {
     var test: i32;
     const a: i32 = 1;
     const b: i32 = 2;
-    println(to_percents(3, 0, 10));
-    println("asdasdasd");
+    const c: i32 = to_percents(3, 0, 10);
+    if c == NaN {
+        println("invalid range!!!");
+    } else {
+        println(c);
+    }
 }

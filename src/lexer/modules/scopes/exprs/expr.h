@@ -14,6 +14,10 @@ typedef enum {
     BINOP_DIVIDE,
     BINOP_EQUALS,
     BINOP_NOT_EQUALS,
+    BINOP_LESS,
+    BINOP_GREATER,
+    BINOP_LE,
+    BINOP_GE,
     binop_variants_count
 } binop_type_t;
 

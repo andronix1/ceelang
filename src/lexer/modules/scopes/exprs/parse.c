@@ -82,11 +82,13 @@ void raw_expr_collect_binops(raw_expr_t *raw_expr, message_base_t base, result_t
 bool binop_1(binop_type_t type) { return type == BINOP_DIVIDE || type == BINOP_MULTIPLY; }
 bool binop_2(binop_type_t type) { return type == BINOP_MINUS || type == BINOP_PLUS; }
 bool binop_3(binop_type_t type) { return type == BINOP_EQUALS || type == BINOP_NOT_EQUALS; }
+bool binop_4(binop_type_t type) { return type == BINOP_LE || type == BINOP_GE || type == BINOP_LESS || type == BINOP_GREATER; }
 
 bool try_raw_expr_to_expr(raw_expr_t *raw_expr, message_base_t base, result_t *result, expr_t *expr) {
     raw_expr_collect_binops(raw_expr, base, result, binop_1);
     raw_expr_collect_binops(raw_expr, base, result, binop_2);
     raw_expr_collect_binops(raw_expr, base, result, binop_3);
+    raw_expr_collect_binops(raw_expr, base, result, binop_4);
 
     if (raw_expr->slice.len != 1) {
         PUSH_ERROR(ERROR_INVALID_EXPR_MISSING_BINOP);

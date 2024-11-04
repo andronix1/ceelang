@@ -37,8 +37,8 @@ void print_expr(expr_t expr) {
 			break;
 		}
 		case EXPR_BINOP: {
-			SEALED_ASSERT_ALL_USED(binop, 6);
-			const char *binops[] = { "+", "-", "*", "/", "==", "!=" };
+			SEALED_ASSERT_ALL_USED(binop, 10);
+			const char *binops[] = { "+", "-", "*", "/", "==", "!=", "<", ">", "<=", ">=" };
 			expr_binop_t *expr_binop = expr_as_binop(expr);
 			printf("(");
 			print_expr(expr_binop->left);
@@ -63,6 +63,8 @@ void print_expr(expr_t expr) {
 	}
 }
 
+void print_stats(stats_slice_t *stats);
+
 void print_stat(stat_t stat) {
 	SEALED_ASSERT_ALL_USED(stat, 4);
 	switch (stat->kind) {
@@ -73,11 +75,13 @@ void print_stat(stat_t stat) {
 				printf(" ");
 				print_expr(stat_return->expr);
 			}
+			printf(";");
 			break;
 		}
 		case STAT_FUNCALL: {
 			stat_funcall_t *stat_funcall = stat_as_funcall(stat);
 			print_funcall(stat_funcall->funcall);
+			printf(";");
 			break;
 		}
 		case STAT_DEFINE: {
@@ -98,12 +102,43 @@ void print_stat(stat_t stat) {
 				printf(" = ");
 				print_expr(stat_define->expr);
 			}
+			printf(";");
+			break;
+		}
+		case STAT_IF: {
+			stat_if_t *stat_if = stat_as_if(stat);
+			printf("if ");
+			print_expr(stat_if->if_cond_stat.cond);
+			printf(" { ");
+			print_stats(&stat_if->if_cond_stat.stats.slice);
+			printf(" }");
+			SLICE_FOREACH(&stat_if->elifs.slice, if_cond_stat_t, stat, {
+				printf(" elif ");
+				print_expr(stat->cond);
+				printf(" { ");
+				print_stats(&stat->stats.slice);
+				printf(" }");
+			});
+			if (stat_if->else_stats) {
+				printf(" else { ");
+				print_stats(&stat_if->else_stats->slice);
+				printf(" }");
+			}
 			break;
 		}
 		default:
 			printf("???");
 			break;
 	}
+}
+
+void print_stats(stats_slice_t *stats) {
+	SLICE_FOREACH(stats, stat_t, stat, {
+		if (i != 0) {
+			printf(" ");
+		}
+		print_stat(*stat);
+	});
 }
 
 void print_def(def_t def) {
@@ -128,12 +163,8 @@ void print_def(def_t def) {
 				printf(": ");
 				str_slice_dump(&func->return_type->slice, stdout);
 			}
-			printf(" {");
-			SLICE_FOREACH(&func->stats.slice, stat_t, stat, {
-				printf(" ");
-				print_stat(*stat);
-				printf(";");
-			});
+			printf(" { ");
+			print_stats(&func->stats.slice);
 			printf(" }");
 			break;
 		}

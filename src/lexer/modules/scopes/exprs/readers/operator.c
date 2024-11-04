@@ -24,6 +24,18 @@ raw_expr_read_result_t raw_expr_operator_reader(tokens_slice_t *tokens, message_
         case TOKEN_NOT_EQUALS:
             binop_type = BINOP_NOT_EQUALS;
             break;
+        case TOKEN_GREATER:
+            binop_type = BINOP_GREATER;
+            break;
+        case TOKEN_LESS:
+            binop_type = BINOP_LESS;
+            break;
+        case TOKEN_LE:
+            binop_type = BINOP_LE;
+            break;
+        case TOKEN_GE:
+            binop_type = BINOP_GE;
+            break;
     }
     if (binop_type == binop_variants_count) {
         return NOT_THIS();
