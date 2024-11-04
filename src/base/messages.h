@@ -28,6 +28,9 @@ typedef enum {
     ERROR_MISSING_TOKEN,
     ERROR_INVALID_TOKEN,
     ERROR_SCOPE_NOT_CLOSED,
+    ERROR_INVALID_EXPR_MISSING_BINOP,
+    ERROR_INVALID_EXPR_BINOP,
+    ERROR_STRING_NOT_CLOSED,
     error_variants_count
 } error_type_t;
 

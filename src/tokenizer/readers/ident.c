@@ -4,7 +4,7 @@
 
 token_read_result_t ident_reader(str_slice_t *slice, message_base_t base, result_t *result) {
     if (slice->len == 0 || !is_start_ident(*str_slice_at(slice, 0))) {
-        return (token_read_result_t)read_result_base_new(READ_NOT_THIS);
+        return NOT_THIS();
     }
     size_t len = 0;
     while (len < slice->len && is_ident(*str_slice_at(slice, len))) len++;

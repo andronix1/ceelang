@@ -16,7 +16,6 @@ void defs_parse(tokens_slice_t slice, message_base_t base, result_t *result, def
                 def_read_result_ok_t *ok = read_result_as_ok(read_result);
                 def_t *def = def_read_result_ok_extract(ok);
                 arr_push(defs, def);
-                i += ok->len;
 			}
 			READERS_READ_END;
 		}

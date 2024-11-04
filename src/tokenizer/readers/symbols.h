@@ -12,5 +12,5 @@
             read_result_base_new_simple(),  \
             token_base_new(keyword_token_type, location_new(0, 0)),  \
             keyword.len  \
-        ) : (token_read_result_t)read_result_base_new(READ_NOT_THIS);  \
+        ) : NOT_THIS();  \
     }

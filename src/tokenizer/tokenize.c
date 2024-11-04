@@ -58,6 +58,7 @@ reader_t token_readers[] = {
 	// parametrized
 	ident_reader,
 	uint_reader,
+	str_reader,
 };
 #define TOKEN_READERS_COUNT (sizeof(token_readers) / sizeof(token_readers[0]))
 

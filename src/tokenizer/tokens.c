@@ -22,10 +22,9 @@ void token_free_wrap(token_t *token) {
 ARR_TYPED_ALIAS_IMPL(tokens, token_t, token_free_wrap);
 
 token_get_scope_err_t token_try_get_scope(tokens_slice_t *slice, tokens_slice_t *dst, token_type_t opening, token_type_t closing) {
-    if (slice->len == 0) {
+    if (slice->len == 0 || (*tokens_slice_at(slice, 0))->kind != opening) {
         return TOKEN_GET_SCOPE_NOT_STARTED;
     }
-    assert((*tokens_slice_at(slice, 0))->kind == opening);
     size_t len = 1;
     size_t level = 1;
     while (len < slice->len) {
@@ -39,7 +38,40 @@ token_get_scope_err_t token_try_get_scope(tokens_slice_t *slice, tokens_slice_t 
                 return TOKEN_GET_SCOPE_OK;
             }
         }
-        len++;
     }
     return TOKEN_GET_SCOPE_NOT_CLOSED;
+}
+
+tokens_slice_t tokens_before(tokens_slice_t *slice, token_type_t type) {
+    size_t i = 0;
+    for (i = 0; i < slice->len; i++) {
+        token_type_t src_type = (*tokens_slice_at(slice, i))->kind;
+        if (src_type == type) {
+            return subslice_before(slice, i);
+        }
+    }
+    return *slice;
+}
+
+tokens_slice_t tokens_before_scoped(tokens_slice_t *slice, token_type_t stop_type, token_type_t opening, token_type_t closing) {
+    if (slice->len == 0) {
+        return *slice;
+    }
+    size_t len = 0;
+    size_t level = 0;
+    while (len < slice->len) {
+        token_type_t type = (*tokens_slice_at(slice, len++))->kind;
+        if (level == 0 && type == stop_type) {
+            return subslice_before(slice, len - 1);
+        }
+        if (type == opening) {
+            level++;
+        } else if (type == closing) {
+            if (level == 0) {
+                return *slice;
+            }
+            level--;
+        }
+    }
+    return *slice;
 }

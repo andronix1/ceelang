@@ -1,5 +1,86 @@
 #include "task.h"
 
+void print_expr(expr_t expr);
+
+void print_funcall(funcall_t *funcall) {
+	str_slice_dump(&funcall->ident.slice, stdout);
+	printf("(");
+	SLICE_FOREACH(&funcall->args.slice, expr_t, expr, {
+		if (i != 0) {
+			printf(", ");
+		}
+		print_expr(*expr);
+	});
+	printf(")");
+}
+
+void print_const(const_t data) {
+	SEALED_ASSERT_ALL_USED(const, 2);
+	switch (data->kind) {
+		case CONST_INT:
+			printf("%d", const_as_int(data)->value);
+			break;
+		case CONST_STR:
+			printf("\"");
+			str_slice_dump(&const_as_str(data)->value.slice, stdout);
+			printf("\"");
+			break;
+	}
+}
+
+void print_expr(expr_t expr) {
+	SEALED_ASSERT_ALL_USED(expr, 4);
+	switch (expr->kind) {
+		case EXPR_IDENT: {
+			expr_ident_t *expr_ident = expr_as_ident(expr);
+			str_slice_dump(&expr_ident->ident.slice, stdout);
+			break;
+		}
+		case EXPR_BINOP: {
+			SEALED_ASSERT_ALL_USED(binop, 6);
+			const char *binops[] = { "+", "-", "*", "/", "==", "!=" };
+			expr_binop_t *expr_binop = expr_as_binop(expr);
+			printf("(");
+			print_expr(expr_binop->left);
+			printf(" %s ", binops[expr_binop->type]);
+			print_expr(expr_binop->right);
+			printf(")");
+			break;
+		}
+		case EXPR_CONST: {
+			expr_const_t *expr_const = expr_as_const(expr);
+			print_const(expr_const->value);
+			break;
+		}
+		case EXPR_FUNCALL: {
+			expr_funcall_t *expr_funcall = expr_as_funcall(expr);
+			print_funcall(&expr_funcall->funcall);
+			break;
+		}
+		default:
+			printf("???");
+			break;
+	}
+}
+
+void print_stat(stat_t stat) {
+	SEALED_ASSERT_ALL_USED(stat, 4);
+	switch (stat->kind) {
+		case STAT_RETURN: {
+			stat_return_t *stat_return = stat_as_return(stat);
+			printf("return");
+			if (stat_return->expr) {
+				printf(" ");
+				print_expr(stat_return->expr);
+			}
+			break;
+		}
+		default:
+			printf("???");
+			break;
+	}
+}
+
 void print_def(def_t def) {
 	SEALED_ASSERT_ALL_USED(def_content, 1);
 	switch (def.content->kind) {
@@ -22,7 +103,13 @@ void print_def(def_t def) {
 				printf(": ");
 				str_slice_dump(&func->return_type->slice, stdout);
 			}
-			printf(" {}");
+			printf(" {");
+			SLICE_FOREACH(&func->stats.slice, stat_t, stat, {
+				printf(" ");
+				print_stat(*stat);
+				printf(";");
+			});
+			printf(" }");
 			break;
 		}
 		// case DEF_CONTENT_CONST:

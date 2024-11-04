@@ -25,6 +25,9 @@ void arr_push(arr_t *arr, void *value) {
 void arr_remove_at(arr_t *arr, size_t idx) {
     assert(idx < arr->slice.len);
     arr->slice.len--;
+    if (arr->free) {
+        arr->free(slice_raw_ptr_to(&arr->slice, idx));
+    }
     if (arr->slice.len != idx) {
         memcpy(slice_raw_ptr_to(&arr->slice, idx), slice_raw_ptr_to(&arr->slice, idx + 1), arr->slice.element_size * (arr->slice.len - idx));
     }

@@ -53,5 +53,8 @@ typedef enum {
 } token_get_scope_err_t;
 
 token_get_scope_err_t token_try_get_scope(tokens_slice_t *slice, tokens_slice_t *dst, token_type_t opening, token_type_t closing);
-#define token_get_circle_scope(slice, dst) token_try_get_scope(slice, dst, TOKEN_OPENING_CIRCLE_BRACE, TOKEN_CLOSING_CIRCLE_BRACE);
-#define token_get_figure_scope(slice, dst) token_try_get_scope(slice, dst, TOKEN_OPENING_FIGURE_BRACE, TOKEN_CLOSING_FIGURE_BRACE);
+tokens_slice_t tokens_before(tokens_slice_t *slice, token_type_t type);
+tokens_slice_t tokens_before_scoped(tokens_slice_t *slice, token_type_t type, token_type_t opening, token_type_t closing);
+#define token_get_circle_scope(slice, dst) token_try_get_scope(slice, dst, TOKEN_OPENING_CIRCLE_BRACE, TOKEN_CLOSING_CIRCLE_BRACE)
+#define token_get_figure_scope(slice, dst) token_try_get_scope(slice, dst, TOKEN_OPENING_FIGURE_BRACE, TOKEN_CLOSING_FIGURE_BRACE)
+#define tokens_before_circle_scoped(slice, type) tokens_before_scoped(slice, type, TOKEN_OPENING_CIRCLE_BRACE, TOKEN_CLOSING_CIRCLE_BRACE)

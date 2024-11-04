@@ -4,7 +4,7 @@ token_read_result_t uint_reader(str_slice_t *slice, message_base_t base, result_
     size_t len = 0;
     while (len < slice->len && is_digit(*str_slice_at(slice, len))) len++;
     if (len == 0) {
-        return (token_read_result_t)read_result_base_new(READ_NOT_THIS);
+        return NOT_THIS();
     }
     str_slice_t uint_slice = subslice_before(slice, len);
     return (token_read_result_t)token_read_result_ok_new(

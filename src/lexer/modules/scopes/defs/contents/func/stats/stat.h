@@ -1,6 +1,5 @@
 #pragma once
 
-#include "lexer/modules/scopes/exprs/funcall/funcall.h"
 #include "lexer/modules/scopes/exprs/expr.h"
 #include "core/arr.h"
 #include "core/sealed.h"
@@ -28,11 +27,11 @@ SEALED_CHILD_DEFINE(stat, STAT_DEFINE, define,
     (expr_t, expr)
 );
 
-SEALED_CHILD_DEFINE(stat, STAT_FUNCALL, funcall,
+SEALED_CHILD_DEFINE_FREE(stat, STAT_FUNCALL, funcall,
     (funcall_t, funcall)
 );
 
-SEALED_CHILD_DEFINE(stat, STAT_RETURN, return,
+SEALED_CHILD_DEFINE_FREE(stat, STAT_RETURN, return,
     (expr_t, expr)
 );
 

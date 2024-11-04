@@ -1,12 +1,14 @@
 #pragma once
 
-#include "binop.h"
-#include "lexer/projects/modules/scopes/exprs/funcall/parse.h"
-#include "tokenizer/tokens.h"
-#include "funcall/funcall.h"
-#include "consts/integer.h"
-#include "consts/str.h"
-#include "ident.h"
 #include "expr.h"
+#include "base/reader.h"
+#include "readers/ident.h"
+#include "readers/operator.h"
+#include "readers/int.h"
+#include "readers/scope.h"
+#include "readers/str.h"
+#include "readers/fun.h"
+#include "raw_expr.h"
 
-expr_t expr_parse(tokens_slice_t tokens);
+void raw_expr_parse(tokens_slice_t slice, message_base_t base, result_t *result, raw_expr_t *raw_expr);
+void expr_parse(tokens_slice_t slice, message_base_t base, result_t *result, expr_t *expr);

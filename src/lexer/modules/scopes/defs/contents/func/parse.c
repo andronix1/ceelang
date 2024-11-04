@@ -1,14 +1,10 @@
 #include "parse.h"
 
 def_read_result_t fun_parse(tokens_slice_t *tokens, message_base_t base, result_t *result) {
-    size_t len = 0;
-    if (tokens->len < 1) {
-        return read_result_base_new(READ_NOT_THIS);
-    }
+    READER_SETUP;
+    EXPECT_TOKENS_COUNT_OR_NOT_THIS(1);
     token_t def_token = NEXT_TOKEN();
-    if (def_token->kind != TOKEN_FUN) {
-        return read_result_base_new(READ_NOT_THIS);
-    }
+    EXPECT_TOKEN_OR_NOT_THIS(def_token, TOKEN_FUN);
 
     // fun <IDENT> (
     EXPECT_TOKENS_COUNT(4);
