@@ -1,14 +1,15 @@
 #include "check.h"
 
+#define TYPES_CHECK(type) if (!types_scope_has_type(&scope_types->slice, type)) PUSH_ERROR(ERROR_UNKNOWN_TYPE)
+
 void types_check_func(def_content_func_t *def, message_base_t base, result_t *result, types_scope_t *scope_types) {
-	PUSH_WARNING(WARNING_NOT_IMPLEMENTED);
+	if (def->return_type) {
+		TYPES_CHECK(&def->return_type->slice);
+	}	
 }
 
 void types_check_define(def_content_define_t *def, message_base_t base, result_t *result, types_scope_t *scope_types) {
-	if (!types_scope_has_type(&scope_types->slice, &def->definition->type.slice)) {
-		PUSH_ERROR(ERROR_UNKNOWN_TYPE);
-	}
-	// PUSH_WARNING(WARNING_NOT_IMPLEMENTED);
+	TYPES_CHECK(&def->definition->type.slice);
 }
 
 void types_check_def(def_t *def, message_base_t base, result_t *result, types_scope_t *scope_types) {
