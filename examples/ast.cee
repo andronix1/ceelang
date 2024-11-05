@@ -13,7 +13,9 @@ fun to_percents(v: i32, a: i32, b: i32): i32 {
     return (v - a) * 100 / (b - a);
 }
 
-fun test(): unknown_type {}
+fun test(a: unknown_type, b: i32): unknown_type {
+	const test_c: unknown_type = 0;
+}
 
 fun main() {
     var test: i32;

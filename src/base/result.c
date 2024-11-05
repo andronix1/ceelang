@@ -23,9 +23,16 @@ void message_dump(message_t message) {
 				"missing binop in expression",
 				"explicit binop in expression",
 				"string literal was not closed",
-				"unknown type",
+				"unknown type for variable ",
 			};
-			printf("ERROR: %s\n", descriptions[message_as_error(message)->type]);
+			error_t error = message_as_error(message)->error;
+			printf("ERROR: %s", descriptions[error->kind]);
+			if (error->kind == ERROR_UNKNOWN_TYPE) {
+				printf("`");
+				str_slice_dump(&error_as_unknown_type(error)->of, stdout);
+				printf("`");
+			}
+			printf("\n");
 			break;
 		}
 		case MESSAGE_WARNING: {

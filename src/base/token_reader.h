@@ -11,7 +11,7 @@
 #define EXPECT_TOKEN(token, type) \
     do { \
         if ((token)->kind != type) { \
-            PUSH_ERROR(ERROR_INVALID_TOKEN); \
+            PUSH_ERROR(error_base_new(ERROR_INVALID_TOKEN)); \
             return INVALID(tokens->len); \
         } \
     } while (0)
@@ -19,7 +19,7 @@
 #define EXPECT_NEXT_TOKEN_OR_ERROR(type) \
     do { \
         if ((NEXT_TOKEN())->kind != type) { \
-            PUSH_ERROR(ERROR_INVALID_TOKEN); \
+            PUSH_ERROR(error_base_new(ERROR_INVALID_TOKEN)); \
             len--; \
         } \
     } while (0)
@@ -34,7 +34,7 @@
 #define EXPECT_MORE_TOKENS(count) \
     do { \
         if (tokens->len < len + (count)) { \
-            PUSH_ERROR(ERROR_MISSING_TOKEN); \
+            PUSH_ERROR(error_base_new(ERROR_MISSING_TOKEN)); \
             return INVALID(tokens->len); \
         } \
     } while (0)

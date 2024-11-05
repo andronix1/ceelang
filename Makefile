@@ -56,5 +56,5 @@ build/obj/%.o: src/%.c
 	@mkdir -p `dirname $@`
 	gcc -c $^ -o $@ -I src
 
-#clean:
-#	rm -Rf build
+clean:
+	rm -Rf build

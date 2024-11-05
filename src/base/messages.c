@@ -9,4 +9,5 @@ void message_free_wrap(message_t *message) {
     message_free(*message);
 }
 
+SEALED_CHILD_IMPL(error, unknown_type);
 ARR_TYPED_ALIAS_IMPL(messages, message_t, message_free_wrap);
