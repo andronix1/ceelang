@@ -36,7 +36,6 @@ typedef read_result_t (*reader_t)(slice_t *slice, message_base_t base, result_t 
     typedef read_result_ok_t name##_read_result_ok_t; \
     typedef read_result_t name##_read_result_t;
 
-#define PUSH_ERROR(err) result_push(result, (message_t)message_error_new(base, err))
 #define NOT_THIS() read_result_base_new(READ_NOT_THIS)
 #define INVALID(len) (read_result_t)read_result_invalid_new(read_result_base_new_simple(), len)
 

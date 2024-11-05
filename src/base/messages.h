@@ -16,6 +16,7 @@ SEALED_BASE(message,
 );
 
 typedef enum {
+    WARNING_NOT_IMPLEMENTED,
     warning_variants_count
 } warning_type_t;
 
@@ -31,6 +32,7 @@ typedef enum {
     ERROR_INVALID_EXPR_MISSING_BINOP,
     ERROR_INVALID_EXPR_BINOP,
     ERROR_STRING_NOT_CLOSED,
+    ERROR_UNKNOWN_TYPE,
     error_variants_count
 } error_type_t;
 

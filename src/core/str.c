@@ -46,6 +46,13 @@ str_slice_t str_slice_before_char(str_slice_t *slice, bool(*filter)(char)) {
 	return subslice_before(slice, i);
 }
 
+bool str_slice_equals(str_slice_t *slice, str_slice_t *other) {
+	if (other->len != slice->len) {
+		return false;
+	}
+	return str_slice_starts_with(slice, other);
+}
+
 bool str_slice_starts_with(str_slice_t *slice, str_slice_t *other) {
 	if (other->len > slice->len) {
 		return false;

@@ -12,6 +12,7 @@ str_t str_clone(str_t *target);
 uint64_t str_slice_to_uint64(str_slice_t *slice);
 str_slice_t str_slice_from_cstr(const char *cstr);
 bool str_slice_starts_with(str_slice_t *slice, str_slice_t *other);
+bool str_slice_equals(str_slice_t *slice, str_slice_t *other);
 str_slice_t str_slice_trim_left(str_slice_t *slice, bool(*filter)(char));
 str_slice_t str_slice_after_char(str_slice_t *slice, bool(*filter)(char));
 str_slice_t str_slice_before_char(str_slice_t *slice, bool(*filter)(char));

@@ -11,9 +11,9 @@ task_err_t type_checker_task(int argc, char **argv) {
 	scope_t scope;
 	message_base_t base = message_base_new_simple(str_slice_from_cstr(file_path), location_new(0, 0));
 	scope_load(file_path, base, &result, &scope);
+	types_check_scope(&scope, base, &result);
 
 	result_print(&result);
-    printf("NOT IMPLEMENTED YET!\n");
 
 	if (result.success) {
 		printf("Type checking finished!\n");

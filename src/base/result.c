@@ -14,7 +14,7 @@ void message_dump(message_t message) {
 	printf(":%d:%d: ", message->location.line + 1, message->location.character + 1);
 	switch (message->kind) {
 		case MESSAGE_ERROR: {
-			SEALED_ASSERT_ALL_USED(error, 7);
+			SEALED_ASSERT_ALL_USED(error, 8);
 			const char *descriptions[] = {
 				"cannot parse token here",
 				"EOF while trying to get token",
@@ -23,12 +23,17 @@ void message_dump(message_t message) {
 				"missing binop in expression",
 				"explicit binop in expression",
 				"string literal was not closed",
+				"unknown type",
 			};
 			printf("ERROR: %s\n", descriptions[message_as_error(message)->type]);
 			break;
 		}
 		case MESSAGE_WARNING: {
-			printf("WARNING: %d\n", message_as_warning(message)->type);
+			SEALED_ASSERT_ALL_USED(warning, 1);
+			const char *descriptions[] = {
+				"not yet implemented!",
+			};
+			printf("WARNING: %s\n", descriptions[message_as_warning(message)->type]);
 			break;
 		}
 	}

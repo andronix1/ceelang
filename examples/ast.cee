@@ -1,4 +1,5 @@
 const c: i32 = 0;
+const c: unknown_type = 0;
 
 fun to_percents(v: i32, a: i32, b: i32): i32 {
     if b <= a {

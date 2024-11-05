@@ -42,17 +42,19 @@ OBJS = build/obj/main.o \
        build/obj/lexer/modules/scopes/defs/contents/func/stats/readers/define.o \
        build/obj/lexer/modules/scopes/defs/contents/func/stats/readers/if.o \
        build/obj/lexer/task.o \
-       build/obj/type_checker/task.o \
+       build/obj/types/task.o \
+       build/obj/types/check.o \
+       build/obj/types/types.o \
        build/obj/debug/scope_print.o
 
 link: build-obj
 	gcc $(OBJS) -o build/cee
 
-build-obj: clean $(OBJS)
+build-obj: $(OBJS)
 
 build/obj/%.o: src/%.c
 	@mkdir -p `dirname $@`
 	gcc -c $^ -o $@ -I src
 
-clean:
-	rm -Rf build
+#clean:
+#	rm -Rf build
