@@ -16,6 +16,7 @@ typedef struct {
 
 arr_t arr_new(size_t len, size_t capacity, void (*free)(void*));
 arr_t arr_copy_from_slice(slice_t* slice, void (*free)(void*));
+void arr_pop(arr_t *arr);
 void arr_push(arr_t *arr, void *value);
 void arr_remove_at(arr_t *arr, size_t idx);
 slice_t *arr_slice(arr_t *arr);

@@ -42,9 +42,9 @@ OBJS = build/obj/main.o \
        build/obj/lexer/modules/scopes/defs/contents/func/stats/readers/define.o \
        build/obj/lexer/modules/scopes/defs/contents/func/stats/readers/if.o \
        build/obj/lexer/task.o \
-       build/obj/types/task.o \
-       build/obj/types/check.o \
-       build/obj/types/types.o \
+       build/obj/analyzer/task.o \
+       build/obj/analyzer/checks/types/type.o \
+       build/obj/analyzer/checks/types/check.o \
        build/obj/debug/scope_print.o
 
 link: build-obj

@@ -22,6 +22,11 @@ void arr_push(arr_t *arr, void *value) {
     arr->slice.len++;
 }
 
+void arr_pop(arr_t *arr) {
+	assert(arr->slice.len > 0);
+	arr->slice.len--;
+}
+
 void arr_remove_at(arr_t *arr, size_t idx) {
     assert(idx < arr->slice.len);
     arr->slice.len--;

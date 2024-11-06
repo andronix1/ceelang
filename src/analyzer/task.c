@@ -11,7 +11,9 @@ task_err_t type_checker_task(int argc, char **argv) {
 	scope_t scope;
 	message_base_t base = message_base_new_simple(str_slice_from_cstr(file_path), location_new(0, 0));
 	scope_load(file_path, base, &result, &scope);
-	types_check_scope(&scope, base, &result);
+	
+	types_info_t info = types_info_new();
+	types_check_scope(&info, &scope, base, &result);
 
 	result_print(&result);
 
