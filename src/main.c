@@ -3,7 +3,7 @@
 
 #include "tokenizer/task.h"
 #include "lexer/task.h"
-#include "types/task.h"
+#include "analyzer/task.h"
 #include "tasks.h"
 
 task_t tasks[] = {

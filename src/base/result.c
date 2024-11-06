@@ -14,7 +14,7 @@ void message_dump(message_t message) {
 	printf(":%d:%d: ", message->location.line + 1, message->location.character + 1);
 	switch (message->kind) {
 		case MESSAGE_ERROR: {
-			SEALED_ASSERT_ALL_USED(error, 8);
+			SEALED_ASSERT_ALL_USED(error, 9);
 			const char *descriptions[] = {
 				"cannot parse token here",
 				"EOF while trying to get token",
@@ -24,12 +24,17 @@ void message_dump(message_t message) {
 				"explicit binop in expression",
 				"string literal was not closed",
 				"unknown type for variable ",
+				"redefinition of symbol "
 			};
 			error_t error = message_as_error(message)->error;
 			printf("ERROR: %s", descriptions[error->kind]);
 			if (error->kind == ERROR_UNKNOWN_TYPE) {
 				printf("`");
 				str_slice_dump(&error_as_unknown_type(error)->of, stdout);
+				printf("`");
+			} else if (error->kind == ERROR_REDEFINITION) {
+				printf("`");
+				str_slice_dump(&error_as_redefinition(error)->of, stdout);
 				printf("`");
 			}
 			printf("\n");

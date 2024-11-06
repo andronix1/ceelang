@@ -15,6 +15,13 @@ fun to_percents(v: i32, a: i32, b: i32): i32 {
 
 fun test(a: unknown_type, b: i32): unknown_type {
 	const test_c: unknown_type = 0;
+	if a {
+		const testif: ut;
+	} elif b {
+		const testelif: ut;
+	} else {
+		const testelse: ut;
+	}
 }
 
 fun main() {

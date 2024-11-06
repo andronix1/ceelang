@@ -14,6 +14,7 @@ task_err_t type_checker_task(int argc, char **argv) {
 	
 	types_info_t info = types_info_new();
 	types_check_scope(&info, &scope, base, &result);
+	symbols_check_scope(&info, &scope, base, &result);
 
 	result_print(&result);
 
