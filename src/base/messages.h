@@ -33,7 +33,8 @@ SEALED_KIND(error,
     ERROR_INVALID_EXPR_BINOP,
     ERROR_STRING_NOT_CLOSED,
     ERROR_UNKNOWN_TYPE,
-    ERROR_REDEFINITION
+    ERROR_REDEFINITION,
+    ERROR_INVALID_TYPE
 );
 
 SEALED_BASE(error);
@@ -44,6 +45,12 @@ SEALED_CHILD_DEFINE(error, ERROR_UNKNOWN_TYPE, unknown_type,
 
 SEALED_CHILD_DEFINE(error, ERROR_REDEFINITION, redefinition,
 	(str_slice_t, of)
+);
+
+SEALED_CHILD_DEFINE(error, ERROR_INVALID_TYPE, invalid_type,
+	(str_slice_t, of),
+	(str_t, expected),
+	(str_t, found)
 );
 
 SEALED_CHILD_DEFINE(message, MESSAGE_ERROR, error,
