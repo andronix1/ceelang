@@ -5,15 +5,22 @@ SEALED_CHILD_IMPL(type, func);
 
 ARR_TYPED_ALIAS_IMPL(types, type_t, NULL);
 
+type_t type_bool;
+type_t type_i32;
+type_t type_str;
+type_t type_void;
+
 types_info_t types_info_new() {
-	type_t t_i32 = (type_t)type_simple_new(type_base_new_simple(), str_slice_from_cstr("i32"));
-	type_t t_void = (type_t)type_simple_new(type_base_new_simple(), str_slice_from_cstr("void"));
-	type_t t_str = (type_t)type_simple_new(type_base_new_simple(), str_slice_from_cstr("str"));
+	type_i32 = (type_t)type_simple_new(type_base_new_simple(), str_slice_from_cstr("i32"));
+	type_void = (type_t)type_simple_new(type_base_new_simple(), str_slice_from_cstr("void"));
+	type_str = (type_t)type_simple_new(type_base_new_simple(), str_slice_from_cstr("str"));
+	type_bool = (type_t)type_simple_new(type_base_new_simple(), str_slice_from_cstr("bool"));
 
 	types_t builtin = types_new_with_cap(1);
-	arr_push(&builtin, &t_i32);
-	arr_push(&builtin, &t_void);
-	arr_push(&builtin, &t_str);
+	arr_push(&builtin, &type_i32);
+	arr_push(&builtin, &type_void);
+	arr_push(&builtin, &type_str);
+	arr_push(&builtin, &type_str);
 
 	types_info_t result = {
 		builtin = builtin

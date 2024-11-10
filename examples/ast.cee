@@ -1,5 +1,6 @@
 const c: i32 = 0;
-const c: unknown_type = 0;
+const c: i32 = 0;
+const c2: unknown_type = 0;
 
 fun to_percents(v: i32, a: i32, b: i32): i32 {
     if b <= a {
@@ -13,10 +14,15 @@ fun to_percents(v: i32, a: i32, b: i32): i32 {
     return (v - a) * 100 / (b - a);
 }
 
+fun testa(a: i32, b: i32): i32 {
+	return i32;
+}
+
 fun test(a: unknown_type, b: i32): unknown_type {
-	const test_c: unknown_type = 0;
+	const test_c: unknown_type = expr_t * expr_f(a, b, c) / to_percents(1, 2, "a");
 	if a {
-		const testif: ut;
+		const testif: str = testa(0, "32");
+		const testif: str = testa(+);
 	} elif b {
 		const testelif: ut;
 	} else {

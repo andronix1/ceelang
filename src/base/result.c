@@ -14,7 +14,7 @@ void message_dump(message_t message) {
 	printf(":%d:%d: ", message->location.line + 1, message->location.character + 1);
 	switch (message->kind) {
 		case MESSAGE_ERROR: {
-			SEALED_ASSERT_ALL_USED(error, 10);
+			SEALED_ASSERT_ALL_USED(error, 11);
 			const char *descriptions[] = {
 				"cannot parse token here",
 				"EOF while trying to get token",
@@ -25,7 +25,8 @@ void message_dump(message_t message) {
 				"string literal was not closed",
 				"unknown type for variable ",
 				"redefinition of symbol ",
-				"invalid type: "
+				"invalid type: ",
+				"if cond must be `bool`, not "
 			};
 			error_t error = message_as_error(message)->error;
 			printf("ERROR: %s", descriptions[error->kind]);
@@ -44,6 +45,11 @@ void message_dump(message_t message) {
 				printf("` for `");
 				str_slice_dump(&error_type->of, stdout);
 				printf("` found `");
+				str_slice_dump(&error_type->found.slice, stdout);
+				printf("`");
+			} else if (error->kind == ERROR_INVALID_IF_COND_TYPE) {
+				error_invalid_if_cond_type_t *error_type = error_as_invalid_if_cond_type(error);
+				printf("`");
 				str_slice_dump(&error_type->found.slice, stdout);
 				printf("`");
 			}

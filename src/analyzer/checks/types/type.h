@@ -27,4 +27,9 @@ typedef struct {
 
 types_info_t types_info_new();
 
+extern type_t type_bool;
+extern type_t type_i32;
+extern type_t type_str;
+extern type_t type_void;
+
 type_t type_resolve_simple(types_info_t *types, str_slice_t *name);

@@ -34,7 +34,8 @@ SEALED_KIND(error,
     ERROR_STRING_NOT_CLOSED,
     ERROR_UNKNOWN_TYPE,
     ERROR_REDEFINITION,
-    ERROR_INVALID_TYPE
+    ERROR_INVALID_TYPE,
+    ERROR_INVALID_IF_COND_TYPE
 );
 
 SEALED_BASE(error);
@@ -50,6 +51,10 @@ SEALED_CHILD_DEFINE(error, ERROR_REDEFINITION, redefinition,
 SEALED_CHILD_DEFINE(error, ERROR_INVALID_TYPE, invalid_type,
 	(str_slice_t, of),
 	(str_t, expected),
+	(str_t, found)
+);
+
+SEALED_CHILD_DEFINE(error, ERROR_INVALID_IF_COND_TYPE, invalid_if_cond_type,
 	(str_t, found)
 );
 
