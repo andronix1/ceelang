@@ -10,7 +10,7 @@ token_read_result_t str_reader(str_slice_t *slice, message_base_t base, result_t
     // TODO: escaping
     while (len < slice->len && *str_slice_at(slice, len) != '\"') len++;
     if (len == slice->len) {
-        PUSH_ERROR(ERROR_STRING_NOT_CLOSED);
+        PUSH_ERROR(error_base_new(ERROR_STRING_NOT_CLOSED));
         return INVALID(slice->len);
     }
     str_slice_t str_slice = subslice_before(slice, len);

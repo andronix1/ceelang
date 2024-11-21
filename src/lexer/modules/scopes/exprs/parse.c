@@ -91,12 +91,12 @@ bool try_raw_expr_to_expr(raw_expr_t *raw_expr, message_base_t base, result_t *r
     raw_expr_collect_binops(raw_expr, base, result, binop_4);
 
     if (raw_expr->slice.len != 1) {
-        PUSH_ERROR(ERROR_INVALID_EXPR_MISSING_BINOP);
+        PUSH_ERROR(error_base_new(ERROR_INVALID_EXPR_MISSING_BINOP));
         return false;
     }
     raw_expr_element_t element = *raw_expr_slice_at(&raw_expr->slice, 0);
     if (element->kind != RAW_EXPR_READY) {
-        PUSH_ERROR(ERROR_INVALID_EXPR_BINOP);
+        PUSH_ERROR(error_base_new(ERROR_INVALID_EXPR_BINOP));
         return false;
     }
     *expr = raw_expr_element_as_ready(element)->expr;

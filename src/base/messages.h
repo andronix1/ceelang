@@ -35,7 +35,10 @@ SEALED_KIND(error,
     ERROR_UNKNOWN_TYPE,
     ERROR_REDEFINITION,
     ERROR_INVALID_TYPE,
-    ERROR_INVALID_IF_COND_TYPE
+    ERROR_INVALID_IF_COND_TYPE,
+    ERROR_INVALID_FUNC_ARGS_COUNT,
+    ERROR_EXPR_BINOP_INVALID_TYPES,
+    ERROR_UNDEFINED_SYMBOL
 );
 
 SEALED_BASE(error);
@@ -54,8 +57,23 @@ SEALED_CHILD_DEFINE(error, ERROR_INVALID_TYPE, invalid_type,
 	(str_t, found)
 );
 
+SEALED_CHILD_DEFINE(error, ERROR_EXPR_BINOP_INVALID_TYPES, binop_invalid_types,
+	(str_t, left),
+	(str_t, right)
+);
+
 SEALED_CHILD_DEFINE(error, ERROR_INVALID_IF_COND_TYPE, invalid_if_cond_type,
 	(str_t, found)
+);
+
+SEALED_CHILD_DEFINE(error, ERROR_INVALID_FUNC_ARGS_COUNT, invalid_func_args_count,
+	(str_slice_t, of),
+	(size_t, expected),
+	(size_t, found)
+);
+
+SEALED_CHILD_DEFINE(error, ERROR_UNDEFINED_SYMBOL, undefined_symbol,
+    (str_slice_t, name)
 );
 
 SEALED_CHILD_DEFINE(message, MESSAGE_ERROR, error,

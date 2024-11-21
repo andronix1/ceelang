@@ -16,8 +16,15 @@ SEALED_CHILD_DEFINE(type, TYPE_SIMPLE, simple,
 
 ARR_TYPED_ALIAS_DEFINE(types, type_t);
 
+typedef struct {
+	str_slice_t name;
+	type_t type;
+} typed_func_arg_t;
+
+ARR_TYPED_ALIAS_DEFINE(typed_func_args, typed_func_arg_t);
+
 SEALED_CHILD_DEFINE(type, TYPE_FUNC, func,
-	(types_t, args),
+	(typed_func_args_t, args),
 	(type_t, returns)
 );
 

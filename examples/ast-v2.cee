@@ -1,9 +1,0 @@
-@ # unknown token for test
-
-const test = 9; # unknown syntax for test
-
-fun test(a: i32, b: i32): i32 {
-    # const c: i32 = a + b;
-    testf(1);
-    return (c + d) * f(c + 2, a, b) / "ASDDSAS";
-}

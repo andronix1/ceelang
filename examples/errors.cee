@@ -1,0 +1,29 @@
+# redefinition
+const red: i32;
+fun red() { const red: i32; }
+
+
+# invalid type
+const it_i32_1: i32;
+const it_i32_2: i32;
+const it_str_1: str;
+const it_bool_1: bool;
+
+const it_assign: str = it_i32_1;
+const it_expr_assign: str = it_i32_1 + it_i32_2;
+const it_expr_binop: str = it_i32_1 + it_str_1;
+const it_expr_binary_binop: bool = it_i32_1 == it_bool_1;
+
+
+# unknown type
+fun ut_f_1(ut_fa: Ut): Ut { const ut_fd_1: Ut; }
+const ut_2: Ut;
+
+# invalid funcall
+fun if_2(a: i32): i32 {}
+fun if_1() {
+	const a: i32 = if_2("asd");
+	if_2(it_str_1);
+	if_1(it_str_1);
+	if_2(it_str_1, it_str_1);
+}
